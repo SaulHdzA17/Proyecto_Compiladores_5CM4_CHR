@@ -60,19 +60,6 @@ public class Scanner {
                         estado = 15;
                         lexema += c;
 
-                        /*while(Character.isDigit(c)){
-
-                        lexema += c;
-                        i++;
-                        c = source.charAt(i);
-
-                        } */
-
-                        /*Token t = new Token(TipoToken.NUMBER, lexema, Integer.valueOf(lexema));
-                        lexema = "";
-                        estado = 0;
-                        tokens.add(t);*/
-                        
 
                     }else if ( Character.isWhitespace(c) ){
                         
