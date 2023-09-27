@@ -171,12 +171,20 @@ public class Scanner {
 
                 break;
 
+<<<<<<< Updated upstream
                 case 31: 
                     c= source.charat(i); //Para comentarios de una sola linea
                     
                     if( c== '/'){
 
                        
+=======
+                case 31:
+                    if( c == '/'){
+
+                        c= source.charat(i);
+                        
+>>>>>>> Stashed changes
 
                         
                     }else if( c == '*'){ //Para comentarios multilinea
