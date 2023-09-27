@@ -166,9 +166,14 @@ public class Scanner {
                         //Checar otros casos de caracteres especiales
                     }
 
-
+        
 
                 break;
+
+                case 31:
+                    if( c== '*'){
+                        
+                    
             }
 
 
