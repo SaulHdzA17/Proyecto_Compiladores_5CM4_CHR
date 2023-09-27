@@ -80,6 +80,7 @@ public class Scanner {
                     break;
 
                 case 13:
+                    
 
                     //Estado de letras
                     if( !Character.isLetter(c) ){ //Si es diferente de letra
