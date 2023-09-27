@@ -173,7 +173,15 @@ public class Scanner {
 
                 case 31:
                     if( c== '/'){
+
                         c= source.charat(i);
+
+                        //Para comentarios de una sola liena
+                    }else if( c == '*'){
+                        
+                    }
+                        
+
                     
             }
 
