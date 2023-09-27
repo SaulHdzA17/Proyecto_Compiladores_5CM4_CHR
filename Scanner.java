@@ -172,8 +172,8 @@ public class Scanner {
                 break;
 
                 case 31:
-                    if( c== '*'){
-                        
+                    if( c== '/'){
+                        c= source.charat(i);
                     
             }
 
