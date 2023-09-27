@@ -171,21 +171,25 @@ public class Scanner {
 
                 break;
 
-                case 31:
+                case 31: 
+                    c= source.charat(i); //Para comentarios de una sola linea
+                    
                     if( c== '/'){
 
-                        c= source.charat(i);
+                       
 
-                        //Para comentarios de una sola liena
-                    }else if( c == '*'){
                         
-                    }
-                        
-
-                    
+                    }else if( c == '*'){ //Para comentarios multilinea
+                        while(source.length()){
+                            c= source.charat(i);
+                            i++;
+                            if(c=='*') {
+                                i++;
+                                c= source.charat(i);
+                            }
+                        }
+                    break;
             }
-
-
         }
 
 
