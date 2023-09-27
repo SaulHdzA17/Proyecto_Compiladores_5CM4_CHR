@@ -176,16 +176,8 @@ public class Scanner {
                     c= source.charat(i); //Para comentarios de una sola linea
                     
                     if( c== '/'){
-
-                       
-
-                case 31:
-
-                    c= source.charat(i);
-                    if( c == '/'){
-
                         
-                          while(source.length()){
+                      while(source.length()){
                             c= source.charat(i);
                             i++;
                           }
