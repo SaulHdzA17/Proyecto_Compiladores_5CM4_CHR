@@ -178,13 +178,17 @@ public class Scanner {
                     if( c== '/'){
 
                        
-=======
+
                 case 31:
+
+                    c= source.charat(i);
                     if( c == '/'){
 
-                        c= source.charat(i);
                         
->>>>>>> Stashed changes
+                          while(source.length()){
+                            c= source.charat(i);
+                            i++;
+                          }
 
                         
                     }else if( c == '*'){ //Para comentarios multilinea
