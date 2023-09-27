@@ -77,6 +77,7 @@ public class Scanner {
                     }else if ( Character.isWhitespace(c) ){
                         
                         //Cuadno es espacio en blanco
+                        estado = 0;
                         i++;
 
                     }else if( !Character.isLetterOrDigit(c) ){
@@ -167,7 +168,18 @@ public class Scanner {
                 break;
 
                 case 20:
+                    
                     //Caracter especial
+                    if( c == '/' ){
+                        
+                        estado = 21; //Caso para comentarios
+                        i++;
+
+                    }else{
+                        //Checar otros casos de caracteres especiales
+                    }
+
+
 
                 break;
             }
