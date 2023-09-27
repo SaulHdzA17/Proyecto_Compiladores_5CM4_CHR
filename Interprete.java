@@ -9,7 +9,7 @@ import java.util.List;
 public class Interprete {
 
     static boolean existenErrores = false;
-sasasasasas
+
     public static void main(String[] args) throws IOException {
         if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");
