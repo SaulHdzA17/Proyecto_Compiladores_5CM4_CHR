@@ -163,12 +163,36 @@ public class Scanner {
                         estado = 31; //Caso para comentarios
                         i++;
 
-                    }else{
+                    }   else if( c== '!'){
                         //Checar otros casos de caracteres especiales
+                      
+                    }
+                       else if( c== '+'){
+                        //Checar otros casos de caracteres especiales
+                      
+                    }
+                       else if( c== '-'){
+                        //Checar otros casos de caracteres especiales
+                      
+                    }
+                       else if( c== '>'){
+                        //Checar otros casos de caracteres especiales
+                      
+                    }
+                        else if( c== '<'){
+                        //Checar otros casos de caracteres especiales
+                      
                     }
 
-        
+                       else if( c== '='){
+                        //Checar otros casos de caracteres especiales
+                      
+                    }
 
+                   
+
+    
+        
                 break;
 
 <<<<<<< Updated upstream
@@ -192,6 +216,10 @@ public class Scanner {
                                 c= source.charat(i);
                             }
                         }
+
+                    estado = 0;
+                    lexema = "";
+
                     break;
             }
         }
