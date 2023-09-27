@@ -172,7 +172,11 @@ public class Scanner {
                 break;
 
                 case 31:
-                    if( c== '*'){
+                    if( c== '/'){
+                        //Para comentarios de una sola liena
+                    }else if( c == '*'){
+                        
+                    }
                         
                     
             }
