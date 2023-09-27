@@ -154,12 +154,12 @@ public class Scanner {
 
                 break;
 
-                case 20:
+                case 30:
                     
                     //Caracter especial
                     if( c == '/' ){
                         
-                        estado = 21; //Caso para comentarios
+                        estado = 31; //Caso para comentarios
                         i++;
 
                     }else{
