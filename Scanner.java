@@ -164,7 +164,8 @@ public class Scanner {
                         i++;
 
                     }   else if( c== '!'){
-                        //Checar otros casos de caracteres especiales
+                        estado = 32;    
+                        i++;
                       
                     }
                        else if( c== '+'){
@@ -197,23 +198,23 @@ public class Scanner {
 
 <<<<<<< Updated upstream
                 case 31: 
-                    c= source.charat(i); //Para comentarios de una sola linea
+                    c= source.charAt(i); //Para comentarios de una sola linea
                     
                     if( c== '/'){
                         
                       while(source.length()){
-                            c= source.charat(i);
+                            c= source.charAt(i);
                             i++;
-                          }
+                          } //! != 
 
                         
                     }else if( c == '*'){ //Para comentarios multilinea
                         while(source.length()){
-                            c= source.charat(i);
+                            c= source.charAt(i);
                             i++;
                             if(c=='*') {
                                 i++;
-                                c= source.charat(i);
+                                c= source.charAt(i);
                             }
                         }
 
@@ -221,11 +222,23 @@ public class Scanner {
                     lexema = "";
 
                     break;
-            }
+                    }
+
+                    case 32:    //Caso para diferente de o negación
+                        c= source.charAt(i); //Para comentarios de una sola linea
+                    
+                        if(c=='='){    //Primer caso con el "Diferente de".
+                            lexema+=c;
+                            Token t = new Token(TipoToken.BANG_EQUAL, lexema, null);
+                            tokens.add(t);
+                        } else {
+                            Token t = new Token(TipoToken.BANG, lexema, null);
+                            tokens.add(t);
+                        }
         }
 
 
         return tokens;
     }
 }
- 
+}
