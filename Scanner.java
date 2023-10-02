@@ -161,28 +161,33 @@ public class Scanner {
                     if( c == '/' ){
                         
                         estado = 31; //Caso para comentarios
+                        lexema += c;
                         i++;
 
                     }   else if( c== '!'){
-                        estado = 32;    
+                        estado = 32;
+                        lexema += c;    
                         i++;
                       
                     }
                        else if( c== '+'){
                         //Checar otros casos de caracteres especiales
-                      
-                    }
-                       else if( c== '-'){
-                        //Checar otros casos de caracteres especiales
-                      
+                       
+                           Token t = new Token(TipoToken.PLUS, lexema, null);
+                            tokens.add(t);
+                        
                     }
                        else if( c== '>'){
                         //Checar otros casos de caracteres especiales
-                      
+                        estado= 33;
+                        lexema += c;
+                        i++;
                     }
-                        else if( c== '<'){
+                        else if( c== '<'){;
                         //Checar otros casos de caracteres especiales
-                      
+                        estado= 36;
+                        lexema += c;
+                        i++;
                     }
 
                        else if( c== '='){
@@ -190,11 +195,10 @@ public class Scanner {
                       
                     }
 
+                    estado = 0;
+                    lexema = "";
                    
-
-    
-        
-                break;
+                   break;
 
 <<<<<<< Updated upstream
                 case 31: 
@@ -235,6 +239,31 @@ public class Scanner {
                             Token t = new Token(TipoToken.BANG, lexema, null);
                             tokens.add(t);
                         }
+                        estado = 0;
+                        lexema = "";
+
+                        break;
+                    
+                    case 33:
+                        //Caso de >
+                        c = source.charAt(i);
+                        if ( c == '=' ){
+                            
+                            lexema += c;
+                            Token t = new Token(TipoToken.GREATER_EQUAL, lexema, null);
+                            tokens.add(t);
+
+                        }else {
+                            
+                            Token t = new Token(TipoToken.GREATER, lexema, null);
+                            tokens.add(t);
+
+                        }
+
+                        estado = 0;
+                        lexmea = "";
+
+                  break;
         }
 
 
