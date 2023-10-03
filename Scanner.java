@@ -264,6 +264,26 @@ public class Scanner {
                         lexmea = "";
 
                   break;
+                  case 36:
+                    //Caso de <
+                    c = source.charAt(i);
+                    if ( c == '=' ){
+                        
+                        lexema += c;
+                        Token t = new Token(TipoToken.LESS_EQUAL, lexema, null);
+                        tokens.add(t);
+
+                    }else {
+                        
+                        Token t = new Token(TipoToken.LESS, lexema, null);
+                        tokens.add(t);
+
+                    }
+
+                    estado = 0;
+                    lexmea = "";
+
+              break;
         }
 
 
