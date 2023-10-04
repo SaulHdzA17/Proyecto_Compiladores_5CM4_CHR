@@ -38,7 +38,7 @@ public class Scanner {
         String lexema = "";
         char c;
 
-        for(int i=0; i<source.length(); i++){
+        for(int i = 0; i<source.length(); i++){
             
             c = source.charAt(i);//optenemos el carcater en el index 0
 
@@ -87,7 +87,7 @@ public class Scanner {
 
                         //Comprobamos el caracter
                         estado = 0;
-                        //lexema += c; ??
+                        lexema += c;
                     
                     }else{
 
@@ -164,44 +164,81 @@ public class Scanner {
                         lexema += c;
                         i++;
 
-                    }   else if( c== '!'){
+                    }else if( c == '!'){
                         estado = 32;
                         lexema += c;    
                         i++;
                       
-                    }
-                       else if( c== '+'){
-                        //Checar otros casos de caracteres especiales
-                       
-                           Token t = new Token(TipoToken.PLUS, lexema, null);
-                            tokens.add(t);
+                    }else if( c == '+'){
                         
-                    }
-                       else if( c== '>'){
                         //Checar otros casos de caracteres especiales
-                        estado= 33;
-                        lexema += c;
-                        i++;
-                    }
-                        else if( c== '<'){;
-                        //Checar otros casos de caracteres especiales
-                        estado= 36;
-                        lexema += c;
-                        i++;
-                    }
+                        Token t = new Token(TipoToken.PLUS, lexema, null);
+                        tokens.add(t);
+                        
+                    }else if( c== '>'){
 
-                       else if( c== '='){
                         //Checar otros casos de caracteres especiales
+                        estado = 33;
+                        lexema += c;
+                        i++;
+                    
+                    }else if( c== '<'){;
+                    
+                        //Checar otros casos de caracteres especiales
+                        estado = 34;
+                        lexema += c;
+                        i++;
+                    
+                    }else if( c== '='){
+                     
+                        //Para el signo =
+                        estado = 35;
+                        lexema += c;
+                        i++;
+
                       
+                    }else if( c == '(' ){//Creacion de tokens de un solo caracter
+                        //Parenticis izquiero
+                        lexema += c;
+                        Token t = new Token(TipoToken.LEFT_PAREN, lexema, null);
+                        tokens.add(t);
+
+
+                    }else if( c == ')' ){
+                        //Parenticis derecho
+                        lexema += c;
+                        Token t = new Token(TipoToken.RIGHT_PAREN, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '{' ){
+                        //Llave izquiero
+                        lexema += c;
+                        Token t = new Token(TipoToken.LEFT_BRACE, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '}' ){
+                        //Llave derecho
+                        lexema += c;
+                        Token t = new Token(TipoToken.RIGHT_BRACE, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '.' ){
+                        //punto
+                        lexema += c;
+                        Token t = new Token(TipoToken.DOT, lexema, null);
+                        tokens.add(t);
+
                     }
 
                     estado = 0;
                     lexema = "";
+
                    
-                   break;
+                break;
 
 //<<<<<<< Updated upstream
                 case 31: 
+
                     c= source.charAt(i); //Para comentarios de una sola linea
                     
                     if( c== '/'){
@@ -222,60 +259,65 @@ public class Scanner {
                             }
                         }
 
+
+                    }
+
+                    estado = 0;
+                    lexema = "";
+                
+                break;
+
+                case 32:    //Caso para diferente de o negación
+                    c = source.charAt(i); //Para comentarios de una sola linea
+                
+                    if(c=='='){    //Primer caso con el "Diferente de".
+                        lexema+=c;
+                        Token t = new Token(TipoToken.BANG_EQUAL, lexema, null);
+                        tokens.add(t);
+                    } else {
+                        Token t = new Token(TipoToken.BANG, lexema, null);
+                        tokens.add(t);
+                    }
                     estado = 0;
                     lexema = "";
 
-                    break;
-                    }
-
-                    case 32:    //Caso para diferente de o negación
-                        c= source.charAt(i); //Para comentarios de una sola linea
-                    
-                        if(c=='='){    //Primer caso con el "Diferente de".
-                            lexema+=c;
-                            Token t = new Token(TipoToken.BANG_EQUAL, lexema, null);
-                            tokens.add(t);
-                        } else {
-                            Token t = new Token(TipoToken.BANG, lexema, null);
-                            tokens.add(t);
-                        }
-                        estado = 0;
-                        lexema = "";
-
-                        break;
-                    
-                    case 33:
-                        //Caso de >
-                        c = source.charAt(i);
-                        if ( c == '=' ){
-                            
-                            lexema += c;
-                            Token t = new Token(TipoToken.GREATER_EQUAL, lexema, null);
-                            tokens.add(t);
-
-                        }else {
-                            
-                            Token t = new Token(TipoToken.GREATER, lexema, null);
-                            tokens.add(t);
-
-                        }
-
-                        estado = 0;
-                        lexema = "";
-
-                  break;
-
-                  case 36:
-                    //Caso de <
+                break;
+                
+                case 33:
+                    //Caso de >
                     c = source.charAt(i);
                     if ( c == '=' ){
                         
                         lexema += c;
-                        Token t = new Token(TipoToken.LESS_EQUAL, lexema, null);
+                        Token t = new Token(TipoToken.GREATER_EQUAL, lexema, null);
                         tokens.add(t);
 
                     }else {
                         
+                        Token t = new Token(TipoToken.GREATER, lexema, null);
+                        tokens.add(t);
+
+                    }
+
+                    estado = 0;
+                    lexema = "";
+
+                break;
+
+                case 34:
+                    
+                    //Caso de <
+                    c = source.charAt(i);
+                    
+                    if ( c == '=' ){
+                       
+                        //Cunao tenemeos <=
+                        lexema += c;
+                        Token t = new Token(TipoToken.LESS_EQUAL, lexema, null);
+                        tokens.add(t);
+
+                    }else{
+                        //Cuando unicamente es <
                         Token t = new Token(TipoToken.LESS, lexema, null);
                         tokens.add(t);
 
@@ -284,10 +326,31 @@ public class Scanner {
                     estado = 0;
                     lexema = "";
 
-                    break;
+                break;
+
+                case 35:
+                   
+                    //Para el signo =
+                    c = source.charAt(i); //Siguiente caracter obtenido
+
+                    if( c == '=' ){                         
+                        
+                        //Si el siguiente caracter es igual
+                        lexema += c;
+                        Token t = new Token(TipoToken.EQUAL_EQUAL, lexema, null);
+                        tokens.add(t);
+
+                    }else{
+
+                        //Si el siguiente no es un = estinces tenemos solo un token de un solo caracter
+                        Token t = new Token(TipoToken.EQUAL, lexema, null);
+                        tokens.add(t);
+
+                    }
+
+                break;
+
             }
-
-
        
         }
 
