@@ -36,6 +36,7 @@ public class Scanner {
         
         int estado = 0;
         String lexema = "";
+
         char c;
 
         for(int i = 0; i<source.length(); i++){
@@ -65,31 +66,119 @@ public class Scanner {
                         
                         //Cuadno es espacio en blanco
                         estado = 0;
-                        i++;
+                        //i++;
 
-                    }else if( !Character.isLetterOrDigit(c) ){
+                    }else if( c == '/' ){
                         
-                        //Cuado no es letra, digito ni espacio en blanco
-                        //Suponemos que es un caracter especial
-                        
-                        estado = 20; //20 -> caracteres especiales
+                        estado = 31; //Caso para comentarios
                         lexema += c;
+                    
 
+                    }else if( c == '!'){
+                        estado = 32;
+                        lexema += c;    
+                    
+                      
+                    }else if( c == '+'){
+                        
+                        //Checar otros casos de caracteres especiales
+                        Token t = new Token(TipoToken.PLUS, lexema, null);
+                        tokens.add(t);
+                        
+                    }else if( c== '>'){
+
+                        //Checar otros casos de caracteres especiales
+                        estado = 33;
+                        lexema += c;
+                     
+                    
+                    }else if( c== '<'){;
+                    
+                        //Checar otros casos de caracteres especiales
+                        estado = 34;
+                        lexema += c;
+                     
+                    
+                    }else if( c== '='){
+                     
+                        //Para el signo =
+                        estado = 35;
+                        lexema += c;
+                     
+
+                      
+                    }else if( c == '(' ){//Creacion de tokens de un solo caracter
+                        //Parenticis izquiero
+                        lexema += c;
+                        Token t = new Token(TipoToken.LEFT_PAREN, lexema, null);
+                        tokens.add(t);
+
+
+                    }else if( c == ')' ){
+                        //Parenticis derecho
+                        lexema += c;
+                        Token t = new Token(TipoToken.RIGHT_PAREN, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '{' ){
+                        //Llave izquiero
+                        lexema += c;
+                        Token t = new Token(TipoToken.LEFT_BRACE, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '}' ){
+                        //Llave derecho
+                        lexema += c;
+                        Token t = new Token(TipoToken.RIGHT_BRACE, lexema, null);
+                        tokens.add(t);
+
+                    }else if( c == '.' ){
+                        //punto
+                        lexema += c;
+                        Token t = new Token(TipoToken.DOT, lexema, null);
+                        tokens.add(t);
+
+                    } else if(c == '-') {
+                        //Para el signo menos
+                        lexema += c;
+                        Token t = new Token(TipoToken.MINUS, lexema, null);
+                        tokens.add(t);
+                    } else if (c == ';') {
+                        //Para el punto y coma
+                        lexema += c;
+                        Token t = new Token(TipoToken.SEMICOLON, lexema, null);
+                        tokens.add(t);
+                    } else if(c == '/') {
+                        //Para el slash
+                        lexema += c;
+                        Token t = new Token(TipoToken.SLASH, lexema, null);
+                        tokens.add(t);
+                    } else if(c == '*') {
+                        //Para el asterisco
+                        lexema += c;
+                        Token t = new Token(TipoToken.STAR, lexema, null);
+                        tokens.add(t);
+                    } else if(c == '"') {
+                        lexema += c;
+                        estado = 36; //Estado para guardar las cadenas.
+                    }else{
+
+                        //error
                     }
+
+                    //estado* = 0;
+                    //lexema = "";
+
+
                     
                     break;
 
                 case 13:
-                    
-
-                    //Estado de letras
-                    if( !Character.isLetter(c) ){ //Si es diferente de letra
-
-                        //Comprobamos el caracter
-                        estado = 0;
+                    if (Character.isLetter(c) || Character.isDigit(c)) {
                         lexema += c;
-                    
-                    }else{
+                        estado = 13;
+                    }
+                    else{
 
                         TipoToken tt = palabrasReservadas.get(lexema);
 
@@ -157,106 +246,7 @@ public class Scanner {
 
                 case 30:
                     
-                    //Caracter especial
-                    if( c == '/' ){
-                        
-                        estado = 31; //Caso para comentarios
-                        lexema += c;
-                        i++;
-
-                    }else if( c == '!'){
-                        estado = 32;
-                        lexema += c;    
-                        i++;
-                      
-                    }else if( c == '+'){
-                        
-                        //Checar otros casos de caracteres especiales
-                        Token t = new Token(TipoToken.PLUS, lexema, null);
-                        tokens.add(t);
-                        
-                    }else if( c== '>'){
-
-                        //Checar otros casos de caracteres especiales
-                        estado = 33;
-                        lexema += c;
-                        i++;
-                    
-                    }else if( c== '<'){;
-                    
-                        //Checar otros casos de caracteres especiales
-                        estado = 34;
-                        lexema += c;
-                        i++;
-                    
-                    }else if( c== '='){
-                     
-                        //Para el signo =
-                        estado = 35;
-                        lexema += c;
-                        i++;
-
-                      
-                    }else if( c == '(' ){//Creacion de tokens de un solo caracter
-                        //Parenticis izquiero
-                        lexema += c;
-                        Token t = new Token(TipoToken.LEFT_PAREN, lexema, null);
-                        tokens.add(t);
-
-
-                    }else if( c == ')' ){
-                        //Parenticis derecho
-                        lexema += c;
-                        Token t = new Token(TipoToken.RIGHT_PAREN, lexema, null);
-                        tokens.add(t);
-
-                    }else if( c == '{' ){
-                        //Llave izquiero
-                        lexema += c;
-                        Token t = new Token(TipoToken.LEFT_BRACE, lexema, null);
-                        tokens.add(t);
-
-                    }else if( c == '}' ){
-                        //Llave derecho
-                        lexema += c;
-                        Token t = new Token(TipoToken.RIGHT_BRACE, lexema, null);
-                        tokens.add(t);
-
-                    }else if( c == '.' ){
-                        //punto
-                        lexema += c;
-                        Token t = new Token(TipoToken.DOT, lexema, null);
-                        tokens.add(t);
-
-                    } else if(c == '-') {
-                        //Para el signo menos
-                        lexema += c;
-                        Token t = new Token(TipoToken.MINUS, lexema, null);
-                        tokens.add(t);
-                    } else if (c == ';') {
-                        //Para el punto y coma
-                        lexema += c;
-                        Token t = new Token(TipoToken.SEMICOLON, lexema, null);
-                        tokens.add(t);
-                    } else if(c == '/') {
-                        //Para el slash
-                        lexema += c;
-                        Token t = new Token(TipoToken.SLASH, lexema, null);
-                        tokens.add(t);
-                    } else if(c == '*') {
-                        //Para el asterisco
-                        lexema += c;
-                        Token t = new Token(TipoToken.STAR, lexema, null);
-                        tokens.add(t);
-                    } else if(c == '"') {
-                        i++;
-                        estado = 36; //Estado para guardar las cadenas.
-                    }
-
-                    estado = 0;
-                    lexema = "";
-
-                   
+                                       
                 break;
 
 //<<<<<<< Updated upstream
@@ -266,13 +256,15 @@ public class Scanner {
                     
                     if( c== '/'){
                         
-                      while( i < source.length() ){
+                      while( c != '\n' ){
                             c= source.charAt(i);
                             i++;
                           } //! != 
 
                         
                     }else if( c == '*'){ //Para comentarios multilinea
+
+                        
                         while( i < source.length() ){
                             c= source.charAt(i);
                             i++;
@@ -300,9 +292,11 @@ public class Scanner {
                     } else {
                         Token t = new Token(TipoToken.BANG, lexema, null);
                         tokens.add(t);
+                        i--;
                     }
                     estado = 0;
                     lexema = "";
+
 
                 break;
                 
@@ -319,6 +313,7 @@ public class Scanner {
                         
                         Token t = new Token(TipoToken.GREATER, lexema, null);
                         tokens.add(t);
+                        i--;
 
                     }
 
@@ -343,6 +338,7 @@ public class Scanner {
                         //Cuando unicamente es <
                         Token t = new Token(TipoToken.LESS, lexema, null);
                         tokens.add(t);
+                        i--;
 
                     }
 
@@ -368,8 +364,12 @@ public class Scanner {
                         //Si el siguiente no es un = estinces tenemos solo un token de un solo caracter
                         Token t = new Token(TipoToken.EQUAL, lexema, null);
                         tokens.add(t);
+                        i--;
 
                     }
+                    estado = 0;
+                    lexema = "";
+
 
                 break;
 
@@ -380,10 +380,11 @@ public class Scanner {
                         i++;
                         c = source.charAt(i);
                     }
-                    Token t = new Token(TipoToken.STRING, lexema, lexema);
+                    lexema += c;
+                    Token t = new Token(TipoToken.STRING, lexema, lexema.substring(1, lexema.length() - 1));
                     tokens.add(t);
                     estado = 0;
-                    lexema = ""
+                    lexema = "";
                 break;
 
             }
