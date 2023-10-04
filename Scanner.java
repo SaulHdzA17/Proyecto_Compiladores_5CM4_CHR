@@ -123,10 +123,10 @@ public class Scanner {
 
                     }
 
-                    if( c = '.' ){
+                    if( c == '.' ){
                         
                         //Para float
-                        lexema += C;
+                        lexema += c;
                         i++;
                         while(Character.isDigit(c)){
 
@@ -200,20 +200,20 @@ public class Scanner {
                    
                    break;
 
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
                 case 31: 
                     c= source.charAt(i); //Para comentarios de una sola linea
                     
                     if( c== '/'){
                         
-                      while(source.length()){
+                      while( i < source.length() ){
                             c= source.charAt(i);
                             i++;
                           } //! != 
 
                         
                     }else if( c == '*'){ //Para comentarios multilinea
-                        while(source.length()){
+                        while( i < source.length() ){
                             c= source.charAt(i);
                             i++;
                             if(c=='*') {
@@ -261,9 +261,10 @@ public class Scanner {
                         }
 
                         estado = 0;
-                        lexmea = "";
+                        lexema = "";
 
                   break;
+
                   case 36:
                     //Caso de <
                     c = source.charAt(i);
@@ -281,13 +282,17 @@ public class Scanner {
                     }
 
                     estado = 0;
-                    lexmea = "";
+                    lexema = "";
 
-              break;
+                    break;
+            }
+
+
+       
         }
 
-
         return tokens;
+    
     }
-}
+
 }
