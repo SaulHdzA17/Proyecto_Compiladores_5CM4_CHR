@@ -228,6 +228,16 @@ public class Scanner {
                         Token t = new Token(TipoToken.DOT, lexema, null);
                         tokens.add(t);
 
+                    } else if(c == '-') {
+                        //Para el signo menos
+                        lexema += c;
+                        Token t = new Token(TipoToken.MINUS, lexema, null);
+                        tokens.add(t);
+                    } else if (c == ';') {
+                        //Para el punto y coma
+                        lexema += c;
+                        Token t = new Token(TipoToken.SEMICOLON, lexema, null);
+                        tokens.add(t);
                     }
 
                     estado = 0;
