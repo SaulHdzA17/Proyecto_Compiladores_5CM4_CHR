@@ -377,7 +377,13 @@ public class Scanner {
                     c = source.charAt(i);
                     while(c != '"') {
                         lexema += c;
+                        i++;
+                        c = source.charAt(i);
                     }
+                    Token t = new Token(TipoToken.STRING, lexema, lexema);
+                    tokens.add(t);
+                    estado = 0;
+                    lexema = ""
                 break;
 
             }
