@@ -248,6 +248,9 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.STAR, lexema, null);
                         tokens.add(t);
+                    } else if(c == '"') {
+                        i++;
+                        estado = 36; //Estado para guardar las cadenas.
                     }
 
                     estado = 0;
@@ -368,6 +371,13 @@ public class Scanner {
 
                     }
 
+                break;
+
+                case 36: //Caso para las cadenas
+                    c = source.charAt(i);
+                    while(c != '"') {
+                        lexema += c;
+                    }
                 break;
 
             }
