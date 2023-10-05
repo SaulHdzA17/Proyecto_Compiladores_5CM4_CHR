@@ -238,6 +238,16 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.SEMICOLON, lexema, null);
                         tokens.add(t);
+                    } else if(c == '/') {
+                        //Para el slash
+                        lexema += c;
+                        Token t = new Token(TipoToken.SLASH, lexema, null);
+                        tokens.add(t);
+                    } else if(c == '*') {
+                        //Para el asterisco
+                        lexema += c;
+                        Token t = new Token(TipoToken.STAR, lexema, null);
+                        tokens.add(t);
                     }
 
                     estado = 0;
