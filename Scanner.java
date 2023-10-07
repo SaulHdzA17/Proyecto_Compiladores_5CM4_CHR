@@ -315,7 +315,7 @@ public class Scanner {
                         lexema = "";
                     }
                     
-                break;                
+                break;               
 
                 case 27:
                     
