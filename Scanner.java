@@ -65,7 +65,6 @@ public class Scanner {
                         
                         //Cuadno es espacio en blanco
                         estado = 0;
-                        //i++;
 
                     }else if( c == '/' ){
                         
@@ -245,6 +244,8 @@ public class Scanner {
                 
                 }else{
                     //otro
+                    estado = 21;//Estado 17 tien un salida al 23, pero lo llevaremos al 20
+                    lexema += c;
                 }
 
                 break;
@@ -345,8 +346,7 @@ public class Scanner {
                     }
                     estado = 0;
                     lexema = "";
-
-
+                    i--;
                 break;
                 
                 case 33:
