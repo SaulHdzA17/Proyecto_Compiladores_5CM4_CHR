@@ -66,12 +66,6 @@ public class Scanner {
                         //Cuadno es espacio en blanco
                         estado = 0;
 
-                    }else if( c == '/' ){
-                        
-                        estado = 31; //Caso para comentarios
-                        lexema += c;
-                    
-
                     }else if( c == '!'){
                         estado = 32;
                         lexema += c;    
