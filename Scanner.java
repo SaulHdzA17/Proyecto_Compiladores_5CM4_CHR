@@ -64,8 +64,7 @@ public class Scanner {
                         //Igual
                         estado = 7;
                         lexema += c;
-                     
-                    
+                        
                     }else if( c== '!'){;
                     
                         //Diferente
@@ -78,6 +77,9 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.LEFT_PAREN, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
 
                     }else if( c == ')' ){
                         
@@ -85,6 +87,9 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.RIGHT_PAREN, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
 
                     }else if( c == '{' ){
                         
@@ -92,6 +97,9 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.LEFT_BRACE, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
 
                     }else if( c == '}' ){
                         
@@ -99,13 +107,18 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.RIGHT_BRACE, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
 
                     }else if( c == '.' ){
                         
                         //punto
                         lexema += c;
                         Token t = new Token(TipoToken.DOT, lexema, null);
-                        tokens.add(t);
+                        tokens.add(t);//Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
 
                     } else if(c == '-') {
                         
@@ -113,12 +126,20 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.MINUS, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
                     
                     }else if( c == '+' ) {
 
+                        //Para el +
                         lexema += c;
                         Token t = new Token(TipoToken.PLUS, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
+
 
                     }else if (c == ';') {
                         
@@ -126,19 +147,25 @@ public class Scanner {
                         lexema += c;
                         Token t = new Token(TipoToken.SEMICOLON, lexema, null);
                         tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
                         
                     } else if(c == '/') {
                        
                         //Para el slash
+                        //System.out.println( "Estado: " + estado + "\nCaracter: "+ c + "\nLexema: " + lexema );
                         lexema += c;
                         estado = 26;
-
+                                               
                     } else if(c == '*') {
                         
                         //Para el asterisco
                         lexema += c;
                         Token t = new Token(TipoToken.STAR, lexema, null);
                         tokens.add(t);
+                        estado = 0;
+                        lexema = "";
 
                     } else if(c == '"') {
                         
@@ -158,6 +185,12 @@ public class Scanner {
                         estado = 15;
                         lexema +=c;
 
+                    }else if( Character.isWhitespace(c) ){
+
+                        //Para espacios en blanco
+                        estado = 0;
+                        lexema += c;
+
                     }
 
                 break;
@@ -172,7 +205,7 @@ public class Scanner {
                     }else {
                         //Cuando es >
                         estado = 3;
-                        //i--;//Retrocedemos para guardar unicamente el anterior
+                        i--;//Retrocedemos para guardar unicamente el anterior
                     }
 
                 break;
@@ -542,6 +575,7 @@ public class Scanner {
                     lexema += c;
                     Token t = new Token(TipoToken.STRING, lexema, lexema.substring(1, lexema.length() - 1));
                     tokens.add(t);
+                    //Devolvemos los valores a cero
                     estado = 0;
                     lexema = "";
                     
@@ -564,11 +598,9 @@ public class Scanner {
                         
                         //Divición (estado 32)
                         //System.out.println(lexema);
-                        Token OS = new Token(TipoToken.SLASH, lexema);
-                        tokens.add(OS);
-                        estado = 0;
-                        lexema = "";
-
+                        estado = 32;
+                        i--;
+                        
                     }
                     
                 break;
@@ -638,6 +670,16 @@ public class Scanner {
 
                     }
                     
+                break;
+
+                case 32:
+                    
+                    //Para unicamente /
+                    Token OS = new Token(TipoToken.SLASH, lexema);
+                    tokens.add(OS);
+                    estado = 0;
+                    lexema = "";
+
                 break;
 
 
