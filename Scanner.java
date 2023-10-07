@@ -60,8 +60,7 @@ public class Scanner {
                         //Cuando es un digito
                         estado = 15;
                         lexema += c;
-
-
+                        
                     }else if ( Character.isWhitespace(c) ){
                         
                         //Cuadno es espacio en blanco
@@ -202,37 +201,27 @@ public class Scanner {
                     break;
 
                 case 15:
+                    c = source.charAt(i);
                     
                     //Como sabemos que es un digito aplicamos el while
-                    while(Character.isDigit(c)){
+                    if(Character.isDigit(c)){
 
+                        estado = 15;
                         lexema += c;
                         i++;
-                        c = source.charAt(i);
+                        
 
-                    }
-
-                    if( c == '.' ){
+                    }else if( c == '.' ){
                         
                         //Para float
-                        lexema += c;
+                        estado = 16;
+                       lexema += c;
                         i++;
-                        while(Character.isDigit(c)){
-
-                            lexema += c;
-                            i++;
-                            c = source.charAt(i);
-
-                        }
-                        
-                        //Creamos token cuando es flotante
-                        Token t = new Token(TipoToken.NUMBER_F, lexema, Float.valueOf(lexema));
-                        tokens.add(t);
-
+                       
                     }else{
                         
                         //Creamos token cuando es entero
-                        Token t = new Token(TipoToken.NUMBER_INT, lexema, Integer.valueOf(lexema));
+                        Token t = new Token(TipoToken.NUMBER, lexema, Integer.valueOf(lexema));
                         tokens.add(t);
 
                     }
@@ -244,7 +233,9 @@ public class Scanner {
 
                 break;
 
-                case 30:
+                case 16:
+                //Estado de números
+
                     
                                        
                 break;
