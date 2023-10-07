@@ -149,8 +149,8 @@ public class Scanner {
                     } else if(c == '/') {
                         //Para el slash
                         lexema += c;
-                        Token t = new Token(TipoToken.SLASH, lexema, null);
-                        tokens.add(t);
+                        estado = 26;
+
                     } else if(c == '*') {
                         //Para el asterisco
                         lexema += c;
@@ -167,8 +167,6 @@ public class Scanner {
                     //estado* = 0;
                     //lexema = "";
 
-
-                    
                     break;
 
                 case 13:
@@ -300,38 +298,71 @@ public class Scanner {
                 break;
 
 //<<<<<<< Updated upstream
-                case 31: 
+                case 26: 
 
-                    c= source.charAt(i); //Para comentarios de una sola linea
+                    //Para el caracter /
                     
-                    if( c== '/'){
-                        
-                      while( c != '\n' ){
-                            c= source.charAt(i);
-                            i++;
-                          } //! != 
+                    if( c == '/'){
+                        //comentarios simples
+                        lexema += c;
+                        estado = 30;
 
-                        
-                    }else if( c == '*'){ //Para comentarios multilinea
+                    }else if( c == '*'){ 
+                        //Para comentarios multilinea
+                        lexema += c;
+                        estado = 27;
+                    }else{
+                        //Divición (estado 32)
+                        System.out.println(lexema);
+                        Token t = new Token(TipoToken.SLASH, lexema, null);
+                        tokens.add(t);
+                        i--;
+                        estado = 0;
+                        lexema = "";
+                    }
+                    
+                break;                
 
-                        
-                        while( i < source.length() ){
-                            c= source.charAt(i);
-                            i++;
-                            if(c=='*') {
-                                i++;
-                                c= source.charAt(i);
-                            }
-                        }
-
-
+                case 27:
+                    
+                    //Cometarios multi linea
+                    if( c != '*' ){
+                        //Mientras sea diferente se mantiene aqui
+                        estado = 27;
+                    }else{
+                        //Cuando es igual avanzamos al estado 28
+                        estado = 28;
                     }
 
-                    estado = 0;
-                    lexema = "";
-                
                 break;
 
+                case 28:
+                    
+                    if( c != '*' ){
+                        //Aun seguimos leyendo una cadena
+                        estado = 27;
+                    }else if( c == '*' ){
+                        //Cuando es ilgual se mantiene aqui
+                        estado = 28;
+                    }else if( c == '/' ){
+                        //Fin de comentario multilinea (estado 29)
+                        estado = 0;
+                        lexema = "";
+                    }
+
+                break;
+                
+                case 30:
+
+                    //Cometarios simples
+                    if( c == '\n' ){//Cuando sea igual al salto de linea, regresamos los valores a 0
+                        //(Estado 31)
+                        estado = 0;
+                        lexema = "";
+                    }
+
+                break;
+                
                 case 32:    //Caso para diferente de o negación
                     c = source.charAt(i); //Para comentarios de una sola linea
                 
