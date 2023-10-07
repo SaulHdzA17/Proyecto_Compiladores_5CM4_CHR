@@ -60,7 +60,7 @@ public class Scanner {
                         //Cuando es un digito
                         estado = 15;
                         lexema += c;
-                        
+
                     }else if ( Character.isWhitespace(c) ){
                         
                         //Cuadno es espacio en blanco
@@ -201,23 +201,19 @@ public class Scanner {
                     break;
 
                 case 15:
-                    c = source.charAt(i);
-                    
+ 
                     //Como sabemos que es un digito aplicamos el while
                     if(Character.isDigit(c)){
 
                         estado = 15;
                         lexema += c;
-                        i++;
-                        
 
                     }else if( c == '.' ){
                         
                         //Para float
                         estado = 16;
-                       lexema += c;
-                        i++;
-                       
+                        lexema += c;
+                                              
                     }else{
                         
                         //Creamos token cuando es entero
@@ -234,10 +230,72 @@ public class Scanner {
                 break;
 
                 case 16:
-                //Estado de números
 
+                //Estado de números
+                
+                if(Character.isDigit(c)){
+                    //Miestras sea un digito se mantiene aquí
+                    estado = 16;//Diagrama estado -> 17
+                    lexema += c;
+                
+                }else if( c == 'E' ){
+                    //Cuando es exponecial
+                    estado = 18;
+                    lexema+=c;
+                
+                }else{
+                    //otro
+                }
+
+                break;
+
+                case 18:
+                //Estado de números
+                
+                if( ( c == '+' ) || ( c == '-' ) || ( c == ' ' ) ){
+                    //Contemplamos simbolos
+                    estado = 19;
+                    lexema += c;
                     
-                                       
+                }else if( Character.isDigit(c) ){
+                    //Cuando nuevamente es digito
+                    estado = 20;
+                    lexema+=c;
+                    
+                }else{
+                    //otro
+                }
+
+                break;
+
+                case 19:
+                    //Unicamente estado de transicion al 20
+                    if( Character.isDigit(c) ){
+                        estado = 20;
+                        lexema += c ;
+                    }else{
+                        //error
+                    }
+                break;
+
+                case 20:
+                    //Unicamente digitos
+                    
+                    if(Character.isDigit(c)){
+                        //Miestras sea un digito se mantiene aquí
+                        estado = 20;//Diagrama estado -> 17
+                        lexema += c;
+                    
+                    }else {
+                        //Cuando no es digito
+                        Token t = new Token(TipoToken.NUMBER, lexema, Float.valueOf(lexema));
+                        tokens.add(t);
+
+                    }
+                    //Regresamos a valores base
+                    estado = 0;
+                    lexema = "";
+                    i--;
                 break;
 
 //<<<<<<< Updated upstream
