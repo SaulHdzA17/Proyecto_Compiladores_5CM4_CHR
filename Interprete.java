@@ -13,24 +13,39 @@ public class Interprete {
     
     public static void main(String[] args) throws IOException {
         
-        FileReader archivo;
-        BufferedReader lector;
+        FileReader archivo;     //Archivo a leer    
+        BufferedReader lector;  //Receptor de cadenas
 
-        try {
+        try {//Intentamos
+            //Buscamos y abrimos el archivos
             archivo = new FileReader("archivo\\Prueba3.txt");
-
+           
             if(archivo.ready()) {
-                lector = new BufferedReader(archivo);
-                String cadena;
-                while((cadena = lector.readLine()) != null) {
-                    ejecutar(cadena);
+              
+                //Se cehca si el archivo esta listo
+                lector = new BufferedReader( archivo ); //Si es así le passamos el archivo a lector
+                String cadena;//variable para leer cade por cadena
+                        
+                       //Asignamos cadena del archivo
+                while( ( cadena = lector.readLine() ) != null) {//Mientras la cadena no llegue al fin de larchivo llamamos a ejecutar
+                    
+                    ejecutar(cadena);//funcion que manda a llamar a scan de la Clase Scanner
+                           //Le pasamos como caracter cadena ya que esta es la que almacena la lina del archivo
+
                 }
+
             } else {
+
+                //Si no se puede leer el archivo, mandamo error
                 System.out.println("El archivo no está listo para ser leído...");
+            
             }
 
         } catch(Exception e) {
+
+            //Exception para ver errores al intar ejecutar el codigo de arriba
             System.out.println("Error: " + e.getMessage());
+        
         }
         
         /*if(args.length > 1) {
@@ -68,16 +83,24 @@ public class Interprete {
     }
 
     private static void ejecutar(String source) {
-        try{                        //Aqui esta source
+
+        try{                        
+                                    //Aqui esta source
             Scanner scanner = new Scanner(source);//Se crea un objeto llamdo Scanner
             List<Token> tokens = scanner.scan();//Se crea un arreglo dinamico de onjetos tipo Token llamado tokens
 
             for(Token token : tokens){
+                //Imprimimos elonjeto token de la Litadinamica <tokens>
                 System.out.println(token);
+       
             }
+       
         }
+       
         catch (Exception ex){
+       
             ex.printStackTrace();
+       
         }
 
     }
