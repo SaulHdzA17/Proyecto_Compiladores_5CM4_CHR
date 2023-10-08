@@ -191,6 +191,11 @@ public class Scanner {
                         estado = 0;
                         lexema += c;
 
+                    }else if( c == '\n' ){
+                        
+                        //Para quitar los saltos de linea
+                        estado = 0;
+                        
                     }
 
                 break;
