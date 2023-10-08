@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -11,11 +12,28 @@ public class Interprete {
     static boolean existenErrores = false;
     
     public static void main(String[] args) throws IOException {
-        //Crear file
-        //Abrirlo
-        //Leerlo en arg ?
         
-        if(args.length > 1) {
+        FileReader archivo;
+        BufferedReader lector;
+
+        try {
+            archivo = new FileReader("archivo\\Prueba3.txt");
+
+            if(archivo.ready()) {
+                lector = new BufferedReader(archivo);
+                String cadena;
+                while((cadena = lector.readLine()) != null) {
+                    ejecutar(cadena);
+                }
+            } else {
+                System.out.println("El archivo no está listo para ser leído...");
+            }
+
+        } catch(Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        /*if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");
 
             // Convención defininida en el archivo "system.h" de UNIX
@@ -24,7 +42,7 @@ public class Interprete {
             ejecutarArchivo(args[0]);
         } else{
             ejecutarPrompt();
-        }
+        }*/
     
     }
 
