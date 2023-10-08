@@ -14,7 +14,6 @@ public class Interprete {
         //Crear file
         //Abrirlo
         //Leerlo en arg ?
-        //Como arg 
         
         if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");
