@@ -9,8 +9,13 @@ import java.util.List;
 public class Interprete {
 
     static boolean existenErrores = false;
-
+    
     public static void main(String[] args) throws IOException {
+        //Crear file
+        //Abrirlo
+        //Leerlo en arg ?
+        //Como arg 
+        
         if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");
 
@@ -21,6 +26,7 @@ public class Interprete {
         } else{
             ejecutarPrompt();
         }
+    
     }
 
     private static void ejecutarArchivo(String path) throws IOException {
@@ -45,9 +51,9 @@ public class Interprete {
     }
 
     private static void ejecutar(String source) {
-        try{
-            Scanner scanner = new Scanner(source);
-            List<Token> tokens = scanner.scan();
+        try{                        //Aqui esta source
+            Scanner scanner = new Scanner(source);//Se crea un objeto llamdo Scanner
+            List<Token> tokens = scanner.scan();//Se crea un arreglo dinamico de onjetos tipo Token llamado tokens
 
             for(Token token : tokens){
                 System.out.println(token);
