@@ -1,9 +1,7 @@
-/* 
-Alumnos   
+/* Alumnos   
 Castro Rendon Gibrham
-    Saúl Hernández Alonso 
-    Rendon Cardona Ever
- */
+Saúl Hernández Alonso 
+ Rendon Cardona Ever */
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
