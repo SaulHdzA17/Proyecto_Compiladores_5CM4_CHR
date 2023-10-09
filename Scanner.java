@@ -1,3 +1,7 @@
+/* Alumnos   
+Castro Rendon Gibrham
+Saúl Hernández Alonso 
+ Rendon Cardona Ever */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
