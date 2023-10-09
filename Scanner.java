@@ -1,5 +1,5 @@
 /* Alumnos   
-Castro Rendon Gibrham
+Castro Rendón Gibrham
 Saúl Hernández Alonso 
  Rendon Cardona Ever */
 import java.util.ArrayList;
