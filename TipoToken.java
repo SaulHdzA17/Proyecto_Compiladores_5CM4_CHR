@@ -1,3 +1,9 @@
+/* 
+Alumnos   
+Castro Rendon Gibrham
+    Saúl Hernández Alonso 
+    Rendon Cardona Ever
+ */
 public enum TipoToken {
        
     // Tokens de un sólo caracter

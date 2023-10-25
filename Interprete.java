@@ -1,7 +1,4 @@
-/* Alumnos   
-Castro Rendón Gibrham
-Saúl Hernández Alonso 
- Rendon Cardona Ever */
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,7 +14,7 @@ public class Interprete {
     
     public static void main(String[] args) throws IOException {
         
-        FileReader archivo;     //Archivo a leer    
+        /*FileReader archivo;     //Archivo a leer    
         BufferedReader lector;  //Receptor de cadenas
 
         try {//Intentamos
@@ -51,8 +48,9 @@ public class Interprete {
             System.out.println("Error: " + e.getMessage());
         
         }
+        */
         
-        /*if(args.length > 1) {
+        if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");
 
             // Convención defininida en el archivo "system.h" de UNIX
@@ -61,7 +59,7 @@ public class Interprete {
             ejecutarArchivo(args[0]);
         } else{
             ejecutarPrompt();
-        }*/
+        }
     
     }
 

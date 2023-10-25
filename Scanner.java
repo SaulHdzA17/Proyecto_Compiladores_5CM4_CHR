@@ -155,6 +155,16 @@ public class Scanner {
                         estado = 0;
                         lexema = "";
                         
+                    }else if( c == ',' ){
+                        
+                        //Para la coma
+                        lexema += c;
+                        Token t = new Token(TipoToken.COMMA, lexema, null);
+                        tokens.add(t);
+                        //Devolvemos los valores a cero
+                        estado = 0;
+                        lexema = "";
+
                     } else if(c == '/') {
                        
                         //Para el slash
@@ -193,9 +203,9 @@ public class Scanner {
 
                         //Para espacios en blanco
                         estado = 0;
-                        lexema += c;
+                        //lexema += c;
 
-                    }else if( c == '\n' ){
+                    }else if( c == '\n' || c == '\t'){
                         
                         //Para quitar los saltos de linea
                         estado = 0;
@@ -608,7 +618,7 @@ public class Scanner {
                         //Divición (estado 32)
                         //System.out.println(lexema);
                         estado = 32;
-                        i--;
+                        
                         
                     }
                     
@@ -639,12 +649,6 @@ public class Scanner {
                         //Mientras sea igual a *, seguimas aquí
                         estado = 28;
 
-                    }else if( c != '*' ){
-
-                        /*Cuando es difenrete suponemos que es algun otro caracte, 
-                        por ende el comentario o a terminado*/
-                        estado = 27;
-
                     }else if( c == '/' ){
 
                         //Cuando es igual a / es el fin del comentario
@@ -653,8 +657,13 @@ public class Scanner {
                         estado = 0;
                         lexema = "";
 
-                    }
+                    }else{
 
+                        /*Cuando es difenrete suponemos que es algun otro caracte, 
+                        por ende el comentario o a terminado*/
+                        estado = 27;
+                    }
+                    
                 break;
 
                 case 30:
@@ -691,10 +700,12 @@ public class Scanner {
 
                 break;
 
-
             }
 
         }
+
+        Token t = new Token(TipoToken.EOF, "EOF", null);
+        tokens.add(t);
 
         return tokens;
     
