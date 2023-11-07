@@ -5,35 +5,36 @@ import java.util.List;
 
 public class Principal {
 
-    static boolean existenErrores = false;
+    static boolean existenErrores = false;//Para determinar si la cadena es valida o no
 
     public static void main(String[] args) throws IOException {
-        ejecutarPrompt();
+        ejecutarPrompt();//Llamada a la ejecucion desde consola
     }
 
     private static void ejecutarPrompt() throws IOException{
+        //Fincion para ejecutar desde consola
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
         for(;;){
             System.out.print(">>> ");
-            String linea = reader.readLine();
+            String linea = reader.readLine();//Lectura de la linea ingresada desde consola
             if(linea == null) break; // Presionar Ctrl + D
-            ejecutar(linea);
+            ejecutar(linea);//
             existenErrores = false;
         }
     }
 
     private static void ejecutar(String source){
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
+        Scanner scanner = new Scanner(source);//Guarda la linea de la consolsa en scanner
+        List<Token> tokens = scanner.scanTokens();//Lista tipo token llamada "tokens"; Agrega el token a la lista 
 
         /*for(Token token : tokens){
             System.out.println(token);
         }*/
 
-        Parser parser = new ASDR(tokens);
-        parser.parse();
+        Parser parser = new ASDR(tokens);//Objeto parse se crea como un objeto ASDR
+        parser.parse();// ".parse();" Funcion booleana
     }
 
     /*

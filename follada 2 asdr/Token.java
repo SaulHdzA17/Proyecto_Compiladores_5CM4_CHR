@@ -1,9 +1,8 @@
 public class Token {
 
-    final TipoToken tipo;
-    final String lexema;
-
-    final int posicion;
+    final TipoToken tipo;   //Objeto TipoToken
+    final String lexema;    //String que leera la cadena de entrada
+    final int posicion;     //Posicion del "apuntador"
 
     public Token(TipoToken tipo, String lexema, int posicion) {
         this.tipo = tipo;
