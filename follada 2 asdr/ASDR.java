@@ -43,7 +43,7 @@ public class ASDR implements Parser{
         match(TipoToken.SELECT); //Validamos que preanalisis.tipo sea del tipo SELECT
         D();                     //Llamada a la funcion D (No terminal con producciones)
         match(TipoToken.FROM);   //Validamos que preanalisis.tipo sea del tipo From   
-        T();                   //Llamada a la funcion T (No terminal con producciones)   
+        T();                     //Llamada a la funcion T (No terminal con producciones)   
     
     
     }
