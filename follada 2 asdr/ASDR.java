@@ -43,7 +43,7 @@ public class ASDR implements Parser{
         match(TipoToken.SELECT); //Validamos que preanalisis.tipo sea del tipo SELECT
         D();                     //Llamada a la funcion D (No terminal con producciones)
         match(TipoToken.FROM);   //Validamos que preanalisis.tipo sea del tipo From   
-        //T();                   //Llamada a la funcion T (No terminal con producciones)   
+        T();                   //Llamada a la funcion T (No terminal con producciones)   
     
     
     }
@@ -156,6 +156,73 @@ public class ASDR implements Parser{
         if(preanalisis.tipo == TipoToken.PUNTO){ //Comparamos que preanalisis.tipo es igual . 
             
             match(TipoToken.PUNTO);         //Validamos que preanalisis.tipo sea del tipo .
+            match(TipoToken.IDENTIFICADOR); //Validamos que preanalisis.tipo sea un identificador
+        
+        }
+
+        /*Segunda proyección  A3 -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+
+    }
+
+    //T -> T2T1
+
+    private void T (){
+        
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        T2();//Llamada a la funcion T2 (No terminal con producciones)
+        T1();//Llamada a la funcion T1 (No terminal con producciones)
+
+    }
+
+
+    //9. T1 -> ,T | Ɛ
+    private void T1 (){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //*Primera proyección  T1 -> ,T
+        if ( this.preanalisis.tipo == TipoToken.COMA ) { //Comparamos que preanalisis.tipo es igual ,
+            
+            match( TipoToken.COMA );    //Validamos que preanalisis.tipo sea del tipo ,
+            T();                        //Llamada a la funcion T (No terminal con producciones)
+
+        }
+
+        /*Segunda proyección  T1 -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+
+    }
+    
+    //T2 -> idT3
+    private void T2 (){
+        
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( this.preanalisis.tipo == TipoToken.IDENTIFICADOR ) { //Comparamos que preanalisis.tipo esa un identificador
+
+            match( TipoToken.IDENTIFICADOR );   //Validamos que preanalisis.tipo sea un identificador
+            T3();                               //Llamada a la funcion T3 (No terminal con producciones)
+
+        }else{
+
+            //De cualquier otro modo se manda error
+            hayErrores = true;
+            System.out.println("Se esperaba un 'identificador'");
+
+        }
+
+    }
+
+    //T3 → id | Ɛ
+    private void T3(){
+
+        if(hayErrores) return;  //Vereficamos que no haya errores
+
+         /*Primera proyección  A3 -> .id */
+        if(preanalisis.tipo == TipoToken.IDENTIFICADOR){ //Comparamos que preanalisis.tipo es igual . 
+            
             match(TipoToken.IDENTIFICADOR); //Validamos que preanalisis.tipo sea un identificador
         
         }
