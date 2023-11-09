@@ -249,3 +249,17 @@ public class ASDR implements Parser{
     }
 
 }
+/*
+ * Declarar un arreglo tipo string [ noTerminales ] [ terminales ]
+ * 
+ * 0,0 no poner nada
+ * 
+ * x,y (deDondeParte, dondeTermina)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
