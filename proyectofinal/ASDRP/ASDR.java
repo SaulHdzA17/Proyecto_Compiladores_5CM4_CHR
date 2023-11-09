@@ -9,7 +9,6 @@ public class ASDR implements Parser{
     private Token preanalisis;          //Objeto para analizar
     private final List<Token> tokens;   //Lista de tokens
 
-
     public ASDR(List<Token> tokens){
         //Costructor por parametros
         this.tokens = tokens;               //Asiganacion de la lista de tokens
@@ -65,7 +64,7 @@ public class ASDR implements Parser{
             DECLARATION();
 
         /*Cuarta proyección DECLARATION -> STATEMENT DECLARATION */
-        }else if( this.preanalisis.tipo == TipoToken.EQUAL_EQUAL ){
+        }else if( ( this.preanalisis.tipo == TipoToken.EQUAL_EQUAL )  || ( this.preanalisis.tipo == TipoToken.EQUAL_EQUAL ) ){
 
             STATEMENT();
             DECLARATION();
@@ -141,7 +140,7 @@ public class ASDR implements Parser{
             IF_STMT();
 
         /*Cuarta proyección  STATEMENT -> PRINT_STMT (-> * -> print)  */
-        }else if( this.preanalisis.tipo == TipoToken.PRINT ){
+        }else if( this.preanalisis.tipo == TipoToken.RETURN  ){
 
             PRINT_STMT();
 
@@ -153,11 +152,25 @@ public class ASDR implements Parser{
         /*Sexta proyección  STATEMENT -> RETURN_STMT (-> * -> return)  */
         }else if( this.preanalisis.tipo == TipoToken.WHILE ){
 
+            RETURN_STMT();
+
             
+        /*Septima proyección  STATEMENT -> BLOCK (-> * -> return)  */
+        }else if( this.preanalisis.tipo == TipoToken.LEFT_BRACE ){
 
+            BLOCK();
 
+        }else{
+        
+            //De cualquier otro modo se manda error
+            hayErrores = true;
+            System.out.println("Se esperaba el inicio de una sentencia'");
+        
         }
     }
+
+    //EXPR_STMT -> EXPRESSION ;
+    
 
     private void match(TipoToken tt){
         
