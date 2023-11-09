@@ -16,6 +16,8 @@ public class ASDR implements Parser{
         preanalisis = this.tokens.get(i);   //Le asignamos al objeto preanalisis el token del indice "i"
     }
 
+    /****** Gramática proyecto final ******/
+
     @Override
     public boolean parse() { //Metodo sobre escrito de la clase Parser
         
@@ -35,7 +37,8 @@ public class ASDR implements Parser{
     
     /****** Estas van ha hacer el trabajo de la recursividad ******/
     
-    
+    /****** Declaraciones ******/
+
     //PROGRAM -> DECLARATION
     private void PROGRAM(){
 
@@ -47,7 +50,7 @@ public class ASDR implements Parser{
     //DECLARATION -> FUN_DECL DECLARATION | VAR_DECL DECLARATION | STATEMENT DECLARATION | Ɛ
     private void DECLARATION(){
 
-        if(hayErrores) return;
+        if(hayErrores) return; //Vereficamos que no haya errores
 
         /*Primera proyección DECLARATION -> FUN_DECL DECLARATION */
         if( this.preanalisis.tipo == TipoToken.FUN ){
@@ -76,9 +79,85 @@ public class ASDR implements Parser{
 
     //FUN_DECL -> fun FUNCTION
     private void FUN_DECL(){
-        
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.FUN_DECL); 
+        FUNCTION();
+
     }
 
+    //VAR_DECL -> var id VAR_INIT ;
+    private VAR_DECL(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.VAR);
+        match(TipoToken.IDENTIFICADOR);
+        VAR_INIT();
+        match(TipoToken.SEMICOLON);
+
+    }
+
+    //VAR_INIT -> = EXPRESSION | Ɛ
+    private void VAR_INIT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección VAR_INIT -> = EXPRESSION */
+        if(this.preanalisis.tipo == TipoToken.EQUAL){
+        
+            match(TipoToken.EQUAL);
+            EXPRESSION();
+        
+        }
+
+        /*Segunda proyección  VAR_INIT -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+    
+    }
+
+    /****** Sentencias ******/
+
+    //STATEMENT -> EXPR_STMT | FOR_STMT | IF_STMT | PRINT_STMT | RETURN_STMT | WHILE_STMT | BLOCK
+    private void STATEMENT(){
+        
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+
+        /*Primera proyección  STATEMENT -> EXPR_STMT (-> * -> !)  */
+        if( this.preanalisis.tipo == TipoToken.BANG ){
+            
+            EXPR_STMT();
+
+        /*Segunda proyección  STATEMENT -> FOR_STMT (-> * -> for)  */
+        }else if( this.preanalisis.tipo == TipoToken.FOR ){
+            
+            FOR_STMT();
+
+        /*Tercera proyección  STATEMENT -> IF_STMT (-> * -> if)  */
+        }else if( this.preanalisis.tipo == TipoToken.IF ){
+
+            IF_STMT();
+
+        /*Cuarta proyección  STATEMENT -> PRINT_STMT (-> * -> print)  */
+        }else if( this.preanalisis.tipo == TipoToken.PRINT ){
+
+            PRINT_STMT();
+
+        /*Quinta proyección  STATEMENT -> RETURN_STMT (-> * -> return)  */
+        }else if( this.preanalisis.tipo == TipoToken.PRINT ){
+            
+            RETURN_STMT();
+
+        /*Sexta proyección  STATEMENT -> RETURN_STMT (-> * -> return)  */
+        }else if( this.preanalisis.tipo == TipoToken.WHILE ){
+
+            
+
+
+        }
+    }
 
     private void match(TipoToken tt){
         
