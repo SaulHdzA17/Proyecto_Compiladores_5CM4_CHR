@@ -75,17 +75,17 @@ public class ASDR implements Parser{
             FUN_DECL();
             DECLARATION();
 
-        /*Tercera proyección DECLARATION -> VAR_DECL DECLARATION */
+        /*Segunda proyección DECLARATION -> VAR_DECL DECLARATION */
         }else if( this.preanalisis.tipo == TipoToken.VAR ){
 
             VAR_DECL();
             DECLARATION();
 
-        /*Cuarta proyección DECLARATION -> STATEMENT DECLARATION */
+        /*Tercera proyección DECLARATION -> STATEMENT DECLARATION */
         }else if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
                || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
                || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-               || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) || ( this.preanalisis.tipo == TipoToken.NULL ) 
+               || ( this.preanalisis.tipo == TipoToken.STRING ) || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
                || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/
                || ( this.preanalisis.tipo == TipoToken.FOR )  || ( this.preanalisis.tipo == TipoToken.IF )
                || ( this.preanalisis.tipo == TipoToken.PRINT )  || ( this.preanalisis.tipo == TipoToken.RETURN )
@@ -95,7 +95,7 @@ public class ASDR implements Parser{
             DECLARATION();
 
         }
-        /*Quinta proyección  DECLARATION -> Ɛ */
+        /*Cuarta proyección  DECLARATION -> Ɛ */
         /*Como aparece Ɛ, no manda error al esta vacío*/
 
     }
