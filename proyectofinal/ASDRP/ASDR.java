@@ -1,3 +1,4 @@
+import java.beans.Expression;
 import java.util.List;
 
 public class ASDR implements Parser{
@@ -51,6 +52,23 @@ public class ASDR implements Parser{
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
+        
+        
+        /*switch ( this.preanalisis.tipo ) {
+            
+            /*Primera proyección DECLARATION -> FUN_DECL DECLARATION
+            case FUN:
+                
+                FUN_DECL();
+                DECLARATION();
+            
+            break;
+        
+            default:
+            break;
+        }*/
+        
+        
         /*Primera proyección DECLARATION -> FUN_DECL DECLARATION */
         if( this.preanalisis.tipo == TipoToken.FUN ){
             
@@ -64,7 +82,14 @@ public class ASDR implements Parser{
             DECLARATION();
 
         /*Cuarta proyección DECLARATION -> STATEMENT DECLARATION */
-        }else if( ( this.preanalisis.tipo == TipoToken.EQUAL_EQUAL )  || ( this.preanalisis.tipo == TipoToken.EQUAL_EQUAL ) ){
+        }else if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+               || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+               || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+               || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) || ( this.preanalisis.tipo == TipoToken.NULL ) 
+               || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/
+               || ( this.preanalisis.tipo == TipoToken.FOR )  || ( this.preanalisis.tipo == TipoToken.IF )
+               || ( this.preanalisis.tipo == TipoToken.PRINT )  || ( this.preanalisis.tipo == TipoToken.RETURN )
+               || ( this.preanalisis.tipo == TipoToken.WHILE )  || ( this.preanalisis.tipo == TipoToken.LEFT_BRACE ) /*P(STATEMENT)*/  ){
 
             STATEMENT();
             DECLARATION();
@@ -81,18 +106,18 @@ public class ASDR implements Parser{
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
-        match(TipoToken.FUN_DECL); 
+        match(TipoToken.FUN); 
         FUNCTION();
 
     }
 
     //VAR_DECL -> var id VAR_INIT ;
-    private VAR_DECL(){
+    private void VAR_DECL(){
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
         match(TipoToken.VAR);
-        match(TipoToken.IDENTIFICADOR);
+        match(TipoToken.IDENTIFIER);
         VAR_INIT();
         match(TipoToken.SEMICOLON);
 
@@ -124,8 +149,12 @@ public class ASDR implements Parser{
         if(hayErrores) return; //Vereficamos que no haya errores
 
 
-        /*Primera proyección  STATEMENT -> EXPR_STMT (-> * -> !)  */
-        if( this.preanalisis.tipo == TipoToken.BANG ){
+        /*Primera proyección  STATEMENT -> EXPR_STMT (-> * -> P(EXPR_STMT)  )  */
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )  ){
             
             EXPR_STMT();
 
@@ -149,13 +178,13 @@ public class ASDR implements Parser{
             
             RETURN_STMT();
 
-        /*Sexta proyección  STATEMENT -> RETURN_STMT (-> * -> return)  */
+        /*Sexta proyección  STATEMENT -> WHILE_STMT (-> * -> WHILE)  */
         }else if( this.preanalisis.tipo == TipoToken.WHILE ){
 
-            RETURN_STMT();
+           HILE_STMT();
 
             
-        /*Septima proyección  STATEMENT -> BLOCK (-> * -> return)  */
+        /*Septima proyección  STATEMENT -> BLOCK (-> * -> BLOCK)  */
         }else if( this.preanalisis.tipo == TipoToken.LEFT_BRACE ){
 
             BLOCK();
@@ -167,10 +196,237 @@ public class ASDR implements Parser{
             System.out.println("Se esperaba el inicio de una sentencia'");
         
         }
+
     }
 
     //EXPR_STMT -> EXPRESSION ;
+    private void EXPR_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección  STATEMENT -> EXPR_STMT (-> * -> P(EXPR_STMT)  )  */
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/  ){
+            
+            EXPRESSION();
+            match(TipoToken.SEMICOLON);
+        
+        }else{
+        
+            //De cualquier otro modo se manda error
+            hayErrores = true;
+            System.out.println("Se esperaba una Expreccion");
+        
+        }
+
+    }
+
+    //FOR_STMT -> for ( FOR_STMT_1 FOR_STMT_2 FOR_STMT_3 ) STATEMENT
+    private void FOR_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.FOR);
+        match(TipoToken.LEFT_PAREN);
+        FOR_STMT_1();
+        FOR_STMT_2();
+        FOR_STMT_3();
+        match(TipoToken.RIGHT_PAREN);
+        STATEMENT();
+
+    }
+
+    //FOR_STMT_1 -> VAR_DECL | EXPR_STMT | ;
+    private void FOR_STMT_1(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+        
+        /*Primera proyección  FOR_STMT_1 -> VAR_DECL (-> * -> VAR  )  */
+        if( this.preanalisis.tipo == TipoToken.VAR ) {
+            
+            VAR_DECL();
+        
+        /*Segunda proyección  FOR_STMT_1 -> EXPR_STMT (-> * -> P(EXPR_STMT)  )  */
+        }else if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+               || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+               || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+               || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) || ( this.preanalisis.tipo == TipoToken.NULL ) 
+               || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/  ){
+
+            EXPR_STMT();
+
+        /*Tercera proyección  FOR_STMT_1 -> ; */
+        }else if( this.preanalisis.tipo == TipoToken.SEMICOLON ){
+            
+            match(TipoToken.SEMICOLON);
+
+        }else{
+        
+            //De cualquier otro modo se manda error
+            hayErrores = true;
+            System.out.println("Error en la declaracion del FOR");
+        
+        }
     
+    }
+
+
+    //FOR_STMT_2 -> EXPRESSION; | ;
+    private void FOR_STMT_2(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección  FOR_STMT_2 -> EXPRESSION; (-> * -> P(EXPR_STMT)  )  */
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/ ){
+            
+            EXPRESSION();
+            match(TipoToken.SEMICOLON);
+        
+        /*Segunda proyección  FOR_STMT_2 -> ; */
+        }else if( this.preanalisis.tipo == TipoToken.SEMICOLON ){
+             
+            match(TipoToken.SEMICOLON);
+
+        }else{
+        
+           //De cualquier otro modo se manda error
+           hayErrores = true;
+           System.out.println("Se esperaba una Expreccion");
+        
+        }
+
+    }
+
+    //FOR_STMT_3 -> EXPRESSION | Ɛ
+    private void FOR_STMT_3(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección  FOR_STMT_3 -> EXPRESSION (-> * -> P(EXPR_STMT)  )  */
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/ ){
+            
+            EXPRESSION();
+        
+        }
+
+        /*Segunda proyección  FOR_STMT_3 -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+
+    }
+    
+    //IF_STMT -> if (EXPRESSION) STATEMENT ELSE_STATEMEN
+    private void IF_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.IF);
+        match(TipoToken.LEFT_PAREN);
+        EXPRESSION();
+        match(TipoToken.RIGHT_PAREN);
+        STATEMENT();
+        ELSE_STATEMENT();
+
+    }
+
+
+    
+    //ELSE_STATEMENT -> else STATEMENT | Ɛ
+    private void ELSE_STATEMENT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección  ELSE_STATEMENT -> else STATEMENT  */
+        if( this.preanalisis.tipo == TipoToken.ELSE ){
+
+            match(TipoToken.ELSE);
+            STATEMENT();
+            
+        }
+
+        /*Segunda proyección  ELSE_STATEMENT -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+
+    }
+
+    //PRINT_STMT -> print EXPRESSION ;
+    private void PRINT_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+        
+        match(TipoToken.PRINT);
+        EXPRESSION();
+        match(TipoToken.SEMICOLON);
+
+    }
+    
+    //RETURN_STMT -> return RETURN_EXP_OPC ;
+    private void RETURN_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+        
+        match(TipoToken.RETURN);
+        RETURN_EXP_OPC();
+        match(TipoToken.SEMICOLON);
+
+    }
+
+    //RETURN_EXP_OPC -> EXPRESSION | Ɛ
+    private void RETURN_EXP_OPC(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        /*Primera proyección  RETURN_EXP_OPC -> EXPRESSION (-> * -> P(EXPRESSION)  )  */
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPRESSION)*/ ){
+            
+            EXPRESSION();
+        
+        }
+
+        /*Segunda proyección  RETURN_EXP_OPC -> Ɛ */
+        /*Como aparece Ɛ, no manda error al esta vacío*/
+
+    }
+
+    //HILE_STMT -> while ( EXPRESSION ) STATEMENT
+    private void HILE_STMT(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.WHILE);
+        match(TipoToken.LEFT_PAREN);
+        EXPRESSION();
+        match(TipoToken.RIGHT_PAREN);
+        STATEMENT();
+
+    }
+
+    //BLOCK -> { DECLARATION }
+    private void BLOCK(){
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.LEFT_BRACE);
+        DECLARATION();
+        match(TipoToken.RIGHT_BRACE);
+
+    }
+
+    /****** Expresiones ******/    
 
     private void match(TipoToken tt){
         

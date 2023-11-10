@@ -1,6 +1,5 @@
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -13,42 +12,6 @@ public class Interprete {
     static boolean existenErrores = false;
     
     public static void main(String[] args) throws IOException {
-        
-        /*FileReader archivo;     //Archivo a leer    
-        BufferedReader lector;  //Receptor de cadenas
-
-        try {//Intentamos
-            //Buscamos y abrimos el archivos
-            archivo = new FileReader("archivo\\Prueba3.txt");
-           
-            if(archivo.ready()) {
-              
-                //Se cehca si el archivo esta listo
-                lector = new BufferedReader( archivo ); //Si es así le passamos el archivo a lector
-                String cadena;//variable para leer cade por cadena
-                        
-                       //Asignamos cadena del archivo
-                while( ( cadena = lector.readLine() ) != null) {//Mientras la cadena no llegue al fin de larchivo llamamos a ejecutar
-                    
-                    ejecutar(cadena);//funcion que manda a llamar a scan de la Clase Scanner
-                           //Le pasamos como caracter cadena ya que esta es la que almacena la lina del archivo
-
-                }
-
-            } else {
-
-                //Si no se puede leer el archivo, mandamo error
-                System.out.println("El archivo no está listo para ser leído...");
-            
-            }
-
-        } catch(Exception e) {
-
-            //Exception para ver errores al intar ejecutar el codigo de arriba
-            System.out.println("Error: " + e.getMessage());
-        
-        }
-        */
         
         if(args.length > 1) {
             System.out.println("Uso correcto: interprete [archivo.txt]");

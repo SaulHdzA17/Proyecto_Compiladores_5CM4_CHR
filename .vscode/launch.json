@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "Proyecto_Compiladores_5CM4_CHR_3fd6fb3c"
+        },
+        {
+            "type": "java",
             "name": "Principal",
             "request": "launch",
             "mainClass": "Principal",
@@ -23,7 +30,7 @@
             "request": "launch",
             "mainClass": "Interprete",
             "projectName": "Proyecto_Compiladores_5CM4_CHR_3743ad29",
-            "args": "archivo\\Prueba5.txt"
+            "args": "archivo\\Prueba8.txt"
         }
     ]
 }
