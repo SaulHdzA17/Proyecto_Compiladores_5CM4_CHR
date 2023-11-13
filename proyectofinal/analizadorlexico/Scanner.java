@@ -1,3 +1,4 @@
+package analizadorlexico;
 /* Alumnos   
 Castro Rendón Gibrham
 Saúl Hernández Alonso 

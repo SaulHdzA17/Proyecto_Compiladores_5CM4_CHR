@@ -1,4 +1,4 @@
-package mx.ipn.escom.k.parser;
+package parser;
 
 //Clase abstrcata
 //Usada como apuntador Void

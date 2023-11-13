@@ -7,6 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import analizadorlexico.Scanner;
+import analizadorlexico.Token;
+import parser.ASDR;
+
 public class Interprete {
 
     static boolean existenErrores = false;
@@ -57,8 +61,12 @@ public class Interprete {
             for(Token token : tokens){
                 //Imprimimos elonjeto token de la Litadinamica <tokens>
                 System.out.println(token);
+                 System.out.println("Hola");
        
             }
+
+            ASDR parser = new ASDR(tokens);
+            parser.parse();
        
         }
        

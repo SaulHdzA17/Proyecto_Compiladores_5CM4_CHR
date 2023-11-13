@@ -1,3 +1,5 @@
+package analizadorlexico;
+
 /* 
 Alumnos   
 Castro Rendon Gibrham

@@ -1,6 +1,6 @@
-package mx.ipn.escom.k.parser;
+package parser;
 
-import mx.ipn.escom.k.tools.Token;
+import analizadorlexico.Token;
 
 public class ExprGet extends Expression{//Clase que hereda de Expression
 

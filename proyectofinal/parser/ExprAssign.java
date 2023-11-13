@@ -1,6 +1,6 @@
-package mx.ipn.escom.k.parser; //nombre del paquete
+package parser; //nombre del paquete
 
-import mx.ipn.escom.k.tools.Token;//importamos el analizado lexico
+import analizadorlexico.Token;;//importamos el analizado lexico
 
 public class ExprAssign extends Expression{//Hereda de Expression
     
