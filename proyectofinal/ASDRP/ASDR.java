@@ -181,7 +181,7 @@ public class ASDR implements Parser{
         /*Sexta proyección  STATEMENT -> WHILE_STMT (-> * -> WHILE)  */
         }else if( this.preanalisis.tipo == TipoToken.WHILE ){
 
-           HILE_STMT();
+           WHILE_STMT();
 
             
         /*Septima proyección  STATEMENT -> BLOCK (-> * -> BLOCK)  */
@@ -321,7 +321,7 @@ public class ASDR implements Parser{
         }
 
         /*Segunda proyección  FOR_STMT_3 -> Ɛ */
-        /*Como aparece Ɛ, no manda error al esta vacío*/
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
 
     }
     
@@ -355,7 +355,7 @@ public class ASDR implements Parser{
         }
 
         /*Segunda proyección  ELSE_STATEMENT -> Ɛ */
-        /*Como aparece Ɛ, no manda error al esta vacío*/
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
 
     }
 
@@ -398,12 +398,12 @@ public class ASDR implements Parser{
         }
 
         /*Segunda proyección  RETURN_EXP_OPC -> Ɛ */
-        /*Como aparece Ɛ, no manda error al esta vacío*/
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
 
     }
 
-    //HILE_STMT -> while ( EXPRESSION ) STATEMENT
-    private void HILE_STMT(){
+    //WHILE_STMT -> while ( EXPRESSION ) STATEMENT
+    private void WHILE_STMT(){
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
@@ -427,6 +427,369 @@ public class ASDR implements Parser{
     }
 
     /****** Expresiones ******/    
+
+    //EXPRESSION -> ASSIGNMENT
+    private void EXPRESSION() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            ASSIGNMENT();
+
+        }
+
+    }
+
+    //ASSIGNMENT -> LOGIC_OR ASSIGNMENT_OPC
+    private void ASSIGNMENT() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            
+            LOGIC_OR();
+            ASSIGNMENT_OP();
+
+        }
+    }
+
+    //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
+    private void ASSIGNMENT_OP() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: ASSIGNMENT_OPC -> = EXPRESSION
+        if((this.preanalisis.tipo == TipoToken.EQUAL)) {
+            match(TipoToken.EQUAL);
+            EXPRESSION();
+        }
+        //Segunda producción: ASSIGNMENT_OPC -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //LOGIC_OR -> LOGIC_AND LOGIC_OR_2
+    private void LOGIC_OR() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            LOGIC_AND(); 
+            LOGIC_OR_2();
+         }
+    }
+
+    //LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2 | Ɛ
+    private void LOGIC_OR_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2
+        if ((this.preanalisis.tipo == TipoToken.OR)) {
+            match(TipoToken.OR);
+            LOGIC_AND();
+            LOGIC_OR_2();
+        }
+        //Segunda producción: LOGIC_OR_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //LOGIC_AND -> EQUALITY LOGIC_AND_2
+    private void LOGIC_AND() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            EQUALITY(); 
+            LOGIC_AND_2();
+         }
+    }
+
+    //LOGIC_AND_2 -> and EQUALITY LOGIC_AND_2 | Ɛ
+    private void LOGIC_AND_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: LOGIC_AND_2 -> and EQUALITY LOGIC_AND_2
+        if((this.preanalisis.tipo == TipoToken.AND)) {
+            match(TipoToken.AND);
+            EQUALITY(); 
+            LOGIC_AND_2();
+        }
+        //Segunda producción: LOGIC_AND_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //EQUALITY -> COMPARISON EQUALITY_2
+    private void EQUALITY() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            COMPARISON();
+            EQUALITY_2();
+         }
+    }
+
+    //EQUALITY_2 -> != COMPARISON EQUALITY_2 | == COMPARISON EQUALITY_2 | Ɛ
+    private void EQUALITY_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: EQUALITY_2 -> != COMPARISON EQUALITY_2
+        if ((this.preanalisis.tipo == TipoToken.BANG_EQUAL)) {
+            match(TipoToken.BANG_EQUAL);
+            COMPARISON(); 
+            EQUALITY_2();
+        }
+        //Segunda producción: EQUALITY_2 -> == COMPARISON EQUALITY_2
+        else if ((this.preanalisis.tipo == TipoToken.EQUAL_EQUAL)) {
+            match(TipoToken.EQUAL_EQUAL);
+            COMPARISON();
+            EQUALITY_2();
+        }
+        //Tercera producción: EQUALITY_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //COMPARISON -> TERM COMPARISON_2
+    private void COMPARISON() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            TERM();
+            COMPARISON_2();
+         }
+    }
+
+    //COMPARISON_2 -> > TERM COMPARISON_2 | >= TERM COMPARISON_2 | < TERM COMPARISON_2 | <= TERM COMPARISON_2 | Ɛ
+    private void COMPARISON_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: COMPARISON_2 -> > TERM COMPARISON_2
+        if ((this.preanalisis.tipo == TipoToken.GREATER)) {
+            match(TipoToken.GREATER);
+            TERM();
+            COMPARISON_2();
+        }
+        //Segunda producción: COMPARISON_2 -> >= TERM COMPARISON_2
+        else if ((this.preanalisis.tipo == TipoToken.GREATER_EQUAL)) {
+            match(TipoToken.GREATER_EQUAL);
+            TERM();
+            COMPARISON_2();
+        }
+        //Tercera producción: COMPARISON_2 -> < TERM COMPARISON_2
+        else if((this.preanalisis.tipo == TipoToken.LESS)) {
+            match(TipoToken.LESS);
+            TERM();
+            COMPARISON_2();
+        }
+        //Cuarta producción: COMPARISON_2 -> <= TERM COMPARISON_2
+        else if ((this.preanalisis.tipo == TipoToken.LESS_EQUAL)) {
+            match(TipoToken.LESS_EQUAL);
+            TERM();
+            COMPARISON_2();
+        }
+        //Quinta producción: COMPARISON_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //TERM -> FACTOR TERM_2
+    private void TERM() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            FACTOR();
+            TERM_2();
+         }
+    }
+
+    //TERM_2 -> - FACTOR TERM_2 | + FACTOR TERM_2 | Ɛ
+    private void TERM_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: TERM_2 -> - FACTOR TERM_2
+        if(( this.preanalisis.tipo == TipoToken.MINUS )) {
+            match(TipoToken.MINUS);
+            FACTOR();
+            TERM_2();
+        }
+        //Segunda producción: TERM_2 -> + FACTOR TERM_2
+        else if(( this.preanalisis.tipo == TipoToken.PLUS )) {
+            match(TipoToken.PLUS);
+            FACTOR();
+            TERM_2();
+        }
+        //Tercera producción: TERM_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //FACTOR -> UNARY FACTOR_2
+    private void FACTOR() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            UNARY();
+            FACTOR_2();
+         }
+    }
+
+    //FACTOR_2 -> / UNARY FACTOR_2 | * UNARY FACTOR_2 | Ɛ
+    private void FACTOR_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: FACTOR_2 -> / UNARY FACTOR_2
+        if (( this.preanalisis.tipo == TipoToken.SLASH )) {
+            match(TipoToken.SLASH);
+            UNARY(); 
+            FACTOR_2();
+        }
+        //Segunda producción: FACTOR_2 -> * UNARY FACTOR_2
+        else if (( this.preanalisis.tipo == TipoToken.STAR )) {
+            match(TipoToken.STAR);
+            UNARY(); 
+            FACTOR_2();
+        }
+        //Tercera producción: FACTOR_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //UNARY -> ! UNARY | - UNARY | CALL
+    private void UNARY() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: UNARY -> ! UNARY
+        if(( this.preanalisis.tipo == TipoToken.BANG )) {
+            match(TipoToken.BANG);
+            UNARY();
+        }
+        //Segunda producción: UNARY -> - UNARY
+        else if (( this.preanalisis.tipo == TipoToken.MINUS )) {
+            match(TipoToken.MINUS);
+            UNARY();
+        }
+        //Tercera producción:  UNARY -> CALL
+        else if (( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            
+            CALL();
+        }
+    }
+
+    //CALL -> PRIMARY CALL_2
+    private void CALL() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if (( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            
+            PRIMARY();
+            CALL_2();
+        }
+    }
+
+    //CALL_2 -> ( ARGUMENTS_OPC ) CALL_2 | Ɛ
+    private void CALL_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: CALL_2 -> ( ARGUMENTS_OPC ) CALL_2
+        if (( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            match((TipoToken.LEFT_PAREN));
+            ARGUMENTS_OPC();
+            match((TipoToken.RIGHT_PAREN));
+            CALL_2();
+        }
+        //Segunda producción: CALL_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //PRIMARY -> true | false | null | number | string | id | ( EXPRESSION )
+    private void PRIMARY() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: PRIMARY -> true
+        if (( this.preanalisis.tipo == TipoToken.TRUE )) {
+            match(TipoToken.TRUE);
+        }
+        //Segunda producción: PRIMARY -> false
+        else if (( this.preanalisis.tipo == TipoToken.FALSE )) {
+            match(TipoToken.FALSE);
+        }
+        //Tercera producción: PRIMARY -> null
+        else if (( this.preanalisis.tipo == TipoToken.NULL )) {
+            match(TipoToken.NULL);
+        }
+        //Cuarta producción: PRIMARY -> number
+        else if (( this.preanalisis.tipo == TipoToken.NUMBER )) {
+            match(TipoToken.NUMBER);
+        }
+        //Quinta producción: PRIMARY -> string
+        else if (( this.preanalisis.tipo == TipoToken.STRING )) {
+            match(TipoToken.STRING);
+        }
+        //Sexta producción: PRIMARY -> id
+        else if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
+            match(TipoToken.IDENTIFIER);
+        }
+        //Septima producción: PRIMARY -> ( EXPRESSION )
+        else if (( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            match(TipoToken.LEFT_PAREN);
+            EXPRESSION();
+            match(TipoToken.RIGHT_PAREN);
+        }
+    }
 
     private void match(TipoToken tt){
         
