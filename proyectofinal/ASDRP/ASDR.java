@@ -791,6 +791,104 @@ public class ASDR implements Parser{
         }
     }
 
+    //*********** OTRAS ********************
+
+    //FUNCTION -> id ( PARAMETERS_OPC ) BLOCK
+    private void FUNCTION() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.IDENTIFIER);
+        match(TipoToken.LEFT_PAREN);
+        PARAMETERS_OPC();
+        match(TipoToken.RIGHT_PAREN);
+        BLOCK();
+    }
+
+    //FUNCTIONS -> FUN_DECL FUNCTIONS | Ɛ
+    private void FUNCTIONS() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: FUNCTIONS -> FUN_DECL FUNCTIONS
+        if (( this.preanalisis.tipo == TipoToken.FUN )) {
+            FUN_DECL();
+            FUNCTIONS();
+        }
+        //Segunda producción: FUNCTIONS -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //PARAMETERS_OPC -> PARAMETERS | Ɛ
+    private void PARAMETERS_OPC() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: PARAMETERS_OPC -> PARAMETERS
+        if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
+            PARAMETERS();
+        }
+        //Segunda producción: PARAMETERS_OPC -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //PARAMETERS -> id PARAMETERS_2
+    private void PARAMETERS() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        match(TipoToken.IDENTIFIER);
+        PARAMETERS_2();
+    }
+
+    //PARAMETERS_2 -> , id PARAMETERS_2 | Ɛ
+    private void PARAMETERS_2() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: PARAMETERS_2 -> , id PARAMETERS_2
+        if (( this.preanalisis.tipo == TipoToken.COMMA )) {
+            match(TipoToken.COMMA);
+            match(TipoToken.IDENTIFIER);
+            PARAMETERS_2();
+        }
+        //Segunda producción: PARAMETERS_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //ARGUMENTS_OPC -> EXPRESSION ARGUMENTS | Ɛ
+    private void ARGUMENTS_OPC() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        //Primera producción: ARGUMENTS_OPC -> EXPRESSION ARGUMENTS
+        if(( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+
+            EXPRESSION();
+            ARGUMENTS();
+        }
+        //Segunda producción: ARGUMENTS_OPC -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
+    //ARGUMENTS -> , EXPRESSION ARGUMENTS | Ɛ
+    private void ARGUMENTS() {
+
+        if(hayErrores) return; //Vereficamos que no haya errores
+
+        if(( this.preanalisis.tipo == TipoToken.COMMA )) {
+            match(TipoToken.COMMA);
+            EXPRESSION();
+            ARGUMENTS();
+        }
+        //Segunda producción: ARGUMENTS -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+    }
+
     private void match(TipoToken tt){
         
         if(preanalisis.tipo == tt){ //Si preanalisis.tipo es igual al TipoToken pasado por parametro (tt)
