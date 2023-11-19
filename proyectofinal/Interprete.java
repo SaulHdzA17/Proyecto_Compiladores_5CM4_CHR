@@ -61,7 +61,7 @@ public class Interprete {
             for(Token token : tokens){
                 //Imprimimos elonjeto token de la Litadinamica <tokens>
                 System.out.println(token);
-                 System.out.println("Hola");
+                //System.out.println("Hola");
        
             }
 

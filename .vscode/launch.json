@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "Proyecto_Compiladores_5CM4_CHR_3fd6fb3c"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
