@@ -7,15 +7,16 @@ import analizadorlexico.Token;
 import java.beans.Expression;
 import java.util.List;
 
-public class Parser {
+public class Test{
     
     private final List<Token> tokens;
     private int i = 0;
     private Token preanalisis;
 
+
+
     //PROGRAM -> DECLARATION
     private void program(){
-        
         declaration();
 
     }
@@ -35,7 +36,7 @@ public class Parser {
     private Expression factor(){
         Expression expr = unary(); //Objeto Expression se iguala a la funcion unary
         expr = factor2(expr);      //Objeto Expression se iguala a la funcion factor2 con unary 
-        return expr;               //Retorna expe
+        return expr;               //Retorna expr
     }
 
     //FACTOR_2 -> / UNARY FACTOR_2 | * UNARY FACTOR_2 | Ɛ
@@ -154,4 +155,6 @@ public class Parser {
         //Retornar el token en la posicion anterior
         return this.tokens.get(i - 1);
     }
+
+    
 }
