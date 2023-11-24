@@ -759,54 +759,72 @@ public class ASDR implements Parser{
     }
 
     //PRIMARY -> true | false | null | number | string | id | ( EXPRESSION )
-    private void PRIMARY() {
+    private Expression PRIMARY() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion PRIMARY"); //Vereficamos que no haya errores
 
         //Primera producción: PRIMARY -> true
         if (( this.preanalisis.tipo == TipoToken.TRUE )) {
             match(TipoToken.TRUE);
+            return new ExprLiteral(true);
         }
         //Segunda producción: PRIMARY -> false
         else if (( this.preanalisis.tipo == TipoToken.FALSE )) {
             match(TipoToken.FALSE);
+            return new ExprLiteral(false);
         }
         //Tercera producción: PRIMARY -> null
         else if (( this.preanalisis.tipo == TipoToken.NULL )) {
             match(TipoToken.NULL);
+            return new ExprLiteral(null);
         }
         //Cuarta producción: PRIMARY -> number
         else if (( this.preanalisis.tipo == TipoToken.NUMBER )) {
             match(TipoToken.NUMBER);
+            Token numero = previous();                      //Le asiganamos el token anterior al de la posicion  (es )
+            return new ExprLiteral(numero.getLiteral());    //Retornamos el nodo
         }
         //Quinta producción: PRIMARY -> string
         else if (( this.preanalisis.tipo == TipoToken.STRING )) {
-            match(TipoToken.STRING);
+            match(TipoToken.STRING);    //Comprovamos que es string
+            Token cadena = previous();  //Le asiganamos el token anterior al de la posicion  (es )
+            return new ExprLiteral(cadena.getLiteral());    //Retornamos el nodo
         }
         //Sexta producción: PRIMARY -> id
         else if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
-            match(TipoToken.IDENTIFIER);
+            match(TipoToken.IDENTIFIER);//Comprovamos que es un identificador
+            Token id = previous();      //Le asiganamos el token anterior al de la posicion  (es )
+            return new ExprVariable(id);//Retornamos el nodo
+
         }
         //Septima producción: PRIMARY -> ( EXPRESSION )
         else if (( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+            
             match(TipoToken.LEFT_PAREN);
-            EXPRESSION();
+            Expression expr = EXPRESSION();
             match(TipoToken.RIGHT_PAREN);
+            return new ExpreGrouping(expr);
+        
         }
     }
 
     //*********** OTRAS ********************
 
     //FUNCTION -> id ( PARAMETERS_OPC ) BLOCK
-    private void FUNCTION() {
+    private void FUNCTION() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FUNCTION"); //Vereficamos que no haya errores
 
         match(TipoToken.IDENTIFIER);
+        //que guardar el id
+        Token name = previous();
         match(TipoToken.LEFT_PAREN);
-        PARAMETERS_OPC();
+        List<Token> parame = PARAMETERS_OPC();
         match(TipoToken.RIGHT_PAREN);
-        BLOCK();
+        Statement block = BLOCK();
+
+        return new StmtFunction( name, parame, block);
+
     }
 
     //FUNCTIONS -> FUN_DECL FUNCTIONS | Ɛ
@@ -826,6 +844,7 @@ public class ASDR implements Parser{
     //PARAMETERS_OPC -> PARAMETERS | Ɛ
     private void PARAMETERS_OPC() {
 
+        //RETORNAR UNA LISTA DE PARAMAETROS
         if(hayErrores) return; //Vereficamos que no haya errores
 
         //Primera producción: PARAMETERS_OPC -> PARAMETERS
@@ -907,6 +926,11 @@ public class ASDR implements Parser{
         
         }
 
+    }
+
+    private Token previous() {
+        //Retornar el token en la posicion anterior
+        return this.tokens.get(i - 1);
     }
 
 }
