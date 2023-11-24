@@ -18,6 +18,11 @@ public class Token {
         this.literal = literal;
     }
 
+    Object getLiteral(){
+
+        return this.literal;
+    }
+
     public String toString() {
         return "<" + tipo + " " + lexema + " " + literal + ">";
     }
