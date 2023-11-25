@@ -619,6 +619,7 @@ public class Scanner {
                         //Divición (estado 32)
                         //System.out.println(lexema);
                         estado = 32;
+                        i--;
                         
                         
                     }
