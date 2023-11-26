@@ -811,7 +811,7 @@ public class ASDR implements Parser{
     //*********** OTRAS ********************
 
     //FUNCTION -> id ( PARAMETERS_OPC ) BLOCK
-    private void FUNCTION() throws Exception {
+    private Statement FUNCTION() throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion FUNCTION"); //Vereficamos que no haya errores
 
@@ -828,9 +828,9 @@ public class ASDR implements Parser{
     }
 
     //FUNCTIONS -> FUN_DECL FUNCTIONS | Ɛ
-    private void FUNCTIONS() {
+    private void FUNCTIONS() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FUNCTIONS");; //Vereficamos que no haya errores
 
         //Primera producción: FUNCTIONS -> FUN_DECL FUNCTIONS
         if (( this.preanalisis.tipo == TipoToken.FUN )) {
