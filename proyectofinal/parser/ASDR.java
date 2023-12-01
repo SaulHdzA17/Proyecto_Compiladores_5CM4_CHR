@@ -830,7 +830,7 @@ public class ASDR implements Parser{
     //FUNCTIONS -> FUN_DECL FUNCTIONS | Ɛ
     private void FUNCTIONS() throws Exception {
 
-        if(hayErrores) throw new Exception("Error en la funcion FUNCTIONS");; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FUNCTIONS"); //Vereficamos que no haya errores
 
         //Primera producción: FUNCTIONS -> FUN_DECL FUNCTIONS
         if (( this.preanalisis.tipo == TipoToken.FUN )) {
@@ -842,26 +842,37 @@ public class ASDR implements Parser{
     }
 
     //PARAMETERS_OPC -> PARAMETERS | Ɛ
-    private void PARAMETERS_OPC() {
+    private Expression PARAMETERS_OPC() throws Exception {
+
 
         //RETORNAR UNA LISTA DE PARAMAETROS
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion PARAMETRS_OPC"); //Vereficamos que no haya errores
+
+         List<Expression> listPara = new List<>();
 
         //Primera producción: PARAMETERS_OPC -> PARAMETERS
         if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
-            PARAMETERS();
+            listPara = PARAMETERS();
         }
+
+        return listPara;
         //Segunda producción: PARAMETERS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
 
     //PARAMETERS -> id PARAMETERS_2
-    private void PARAMETERS() {
+    private Expression PARAMETERS() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion PARAMETRS"); //Vereficamos que no haya errores
+
+        List<Expression> listPara = new List<>();
 
         match(TipoToken.IDENTIFIER);
-        PARAMETERS_2();
+
+        listPara = PARAMETERS_2();
+
+        return listPara;
+
     }
 
     //PARAMETERS_2 -> , id PARAMETERS_2 | Ɛ
