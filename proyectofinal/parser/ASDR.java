@@ -911,7 +911,7 @@ public class ASDR implements Parser{
             nameList = ARGUMENTS();
         }
 
-        return nameList;
+        return ExprGrouping(nameList);
         //Segunda producción: ARGUMENTS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
