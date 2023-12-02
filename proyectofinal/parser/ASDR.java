@@ -878,7 +878,7 @@ public class ASDR implements Parser{
     //PARAMETERS_2 -> , id PARAMETERS_2 | Ɛ
     private Expression PARAMETERS_2() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion PARAMETRS_2"); //Vereficamos que no haya errores
 
         List<Expression> listPara = new List<>();
 
@@ -895,10 +895,11 @@ public class ASDR implements Parser{
     }
 
     //ARGUMENTS_OPC -> EXPRESSION ARGUMENTS | Ɛ
-    private void ARGUMENTS_OPC() {
+    private Expression ARGUMENTS_OPC() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion ARGUMENTS_OPC"); //Vereficamos que no haya errores
 
+        List<Expression> nameList = new List<>();
         //Primera producción: ARGUMENTS_OPC -> EXPRESSION ARGUMENTS
         if(( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
          || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
@@ -906,23 +907,29 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
 
-            EXPRESSION();
-            ARGUMENTS();
+            nameList = EXPRESSION();
+            nameList = ARGUMENTS();
         }
+
+        return nameList;
         //Segunda producción: ARGUMENTS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
 
     //ARGUMENTS -> , EXPRESSION ARGUMENTS | Ɛ
-    private void ARGUMENTS() {
+    private Expression ARGUMENTS() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion ARGUMENTS"); //Vereficamos que no haya errores
+
+        List<Expression> listName = new List<>();
 
         if(( this.preanalisis.tipo == TipoToken.COMMA )) {
             match(TipoToken.COMMA);
-            EXPRESSION();
-            ARGUMENTS();
+            listName = EXPRESSION();
+            listName = ARGUMENTS();
         }
+
+        return nameList;
         //Segunda producción: ARGUMENTS -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
