@@ -876,16 +876,20 @@ public class ASDR implements Parser{
     }
 
     //PARAMETERS_2 -> , id PARAMETERS_2 | Ɛ
-    private void PARAMETERS_2() {
+    private Expression PARAMETERS_2() throws Exception {
 
         if(hayErrores) return; //Vereficamos que no haya errores
+
+        List<Expression> listPara = new List<>();
 
         //Primera producción: PARAMETERS_2 -> , id PARAMETERS_2
         if (( this.preanalisis.tipo == TipoToken.COMMA )) {
             match(TipoToken.COMMA);
             match(TipoToken.IDENTIFIER);
-            PARAMETERS_2();
+            listPara = PARAMETERS_2();
         }
+
+        return listPara;
         //Segunda producción: PARAMETERS_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
