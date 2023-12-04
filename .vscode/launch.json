@@ -9,6 +9,13 @@
             "name": "Interprete",
             "request": "launch",
             "mainClass": "Interprete",
+            "projectName": "Proyecto_Compiladores_5CM4_CHR_8253ac66"
+        },
+        {
+            "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
             "projectName": "Proyecto_Compiladores_5CM4_CHR_3fd6fb3c"
         },
         {
