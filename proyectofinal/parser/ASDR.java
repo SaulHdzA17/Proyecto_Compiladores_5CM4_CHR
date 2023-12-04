@@ -844,18 +844,21 @@ public class ASDR implements Parser{
     //PARAMETERS_OPC -> PARAMETERS | Ɛ
     private Expression PARAMETERS_OPC() throws Exception {
 
-
         //RETORNAR UNA LISTA DE PARAMAETROS
         if(hayErrores) throw new Exception("Error en la funcion PARAMETRS_OPC"); //Vereficamos que no haya errores
 
-         List<Expression> listPara = new List<>();
+        //List<Expression> listPara = new List<>();
+        Expression paraOpc;
 
         //Primera producción: PARAMETERS_OPC -> PARAMETERS
         if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
-            listPara = PARAMETERS();
+             
+            paraOpc = this.PARAMETERS();
+            
         }
 
-        return listPara;
+        return paraOpc;
+        
         //Segunda producción: PARAMETERS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
@@ -886,7 +889,7 @@ public class ASDR implements Parser{
         if (( this.preanalisis.tipo == TipoToken.COMMA )) {
             match(TipoToken.COMMA);
             match(TipoToken.IDENTIFIER);
-            listPara = PARAMETERS_2();
+            listPara = previous();
         }
 
         return listPara;
@@ -929,7 +932,7 @@ public class ASDR implements Parser{
             listName = ARGUMENTS();
         }
 
-        return nameList;
+        return listName;
         //Segunda producción: ARGUMENTS -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
