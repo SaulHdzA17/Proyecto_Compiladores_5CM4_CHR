@@ -1,4 +1,5 @@
 package parser;
+import java.util.ArrayList;
 import java.util.List;
 
 import analizadorlexico.TipoToken;
@@ -898,11 +899,11 @@ public class ASDR implements Parser{
     }
 
     //ARGUMENTS_OPC -> EXPRESSION ARGUMENTS | Ɛ
-    private Expression ARGUMENTS_OPC() throws Exception {
+    private List<Expression> ARGUMENTS_OPC() throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion ARGUMENTS_OPC"); //Vereficamos que no haya errores
 
-        List<Expression> nameList = new List<>();
+        List<Expression> nameList = new ArrayList<>();
         //Primera producción: ARGUMENTS_OPC -> EXPRESSION ARGUMENTS
         if(( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
          || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
@@ -910,29 +911,27 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
 
-            nameList = EXPRESSION();
-            nameList = ARGUMENTS();
+            Expression expr = EXPRESSION();
+            nameList.add(expr);
+            ARGUMENTS(nameList);
         }
 
-        return ExprGrouping(nameList);
+        return nameList;
         //Segunda producción: ARGUMENTS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
 
     //ARGUMENTS -> , EXPRESSION ARGUMENTS | Ɛ
-    private Expression ARGUMENTS() throws Exception {
+    private void ARGUMENTS(List<Expression> expresiones) throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion ARGUMENTS"); //Vereficamos que no haya errores
 
-        List<Expression> listName = new List<>();
-
         if(( this.preanalisis.tipo == TipoToken.COMMA )) {
             match(TipoToken.COMMA);
-            listName = EXPRESSION();
-            listName = ARGUMENTS();
+            Expression expr = EXPRESSION();
+            expresiones.add(expr);
+            ARGUMENTS(expresiones);
         }
-
-        return listName;
         //Segunda producción: ARGUMENTS -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
