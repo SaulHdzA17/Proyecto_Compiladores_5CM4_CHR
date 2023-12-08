@@ -56,23 +56,6 @@ public class ASDR implements Parser{
     private void DECLARATION(){
 
         if(hayErrores) return; //Vereficamos que no haya errores
-
-        
-        
-        /*switch ( this.preanalisis.tipo ) {
-            
-            /*Primera proyección DECLARATION -> FUN_DECL DECLARATION
-            case FUN:
-                
-                FUN_DECL();
-                DECLARATION();
-            
-            break;
-        
-            default:
-            break;
-        }*/
-        
         
         /*Primera proyección DECLARATION -> FUN_DECL DECLARATION */
         if( this.preanalisis.tipo == TipoToken.FUN ){
@@ -343,8 +326,6 @@ public class ASDR implements Parser{
         ELSE_STATEMENT();
 
     }
-
-
     
     //ELSE_STATEMENT -> else STATEMENT | Ɛ
     private void ELSE_STATEMENT(){
@@ -421,13 +402,16 @@ public class ASDR implements Parser{
     }
 
     //BLOCK -> { DECLARATION }
-    private void BLOCK(){
+    private Statement BLOCK(List<Statement> state) throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion BLOCK");; //Vereficamos que no haya errores
 
         match(TipoToken.LEFT_BRACE);
-        DECLARATION();
+        state = new ArrayList<>();
+        state = DECLARATION();
         match(TipoToken.RIGHT_BRACE);
+
+        return new StmtBlock(state);
 
     }
 
@@ -820,9 +804,11 @@ public class ASDR implements Parser{
         //que guardar el id
         Token name = previous();
         match(TipoToken.LEFT_PAREN);
+        //Avance de PARAMETERS_OPC
         List<Token> parame = PARAMETERS_OPC();
         match(TipoToken.RIGHT_PAREN);
-        Statement block = BLOCK();
+        List<Statement> state = new ArrayList<>();
+        Statement block = BLOCK(state);
 
         return new StmtFunction( name, parame, block);
 
@@ -838,49 +824,46 @@ public class ASDR implements Parser{
             FUN_DECL();
             FUNCTIONS();
         }
+
+        
         //Segunda producción: FUNCTIONS -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
 
     //PARAMETERS_OPC -> PARAMETERS | Ɛ
-    private Expression PARAMETERS_OPC() throws Exception {
+    private List<Token> PARAMETERS_OPC() throws Exception {
 
         //RETORNAR UNA LISTA DE PARAMAETROS
         if(hayErrores) throw new Exception("Error en la funcion PARAMETRS_OPC"); //Vereficamos que no haya errores
 
-        //List<Expression> listPara = new List<>();
-        Expression paraOpc;
+        List<Token> nameList = new ArrayList<>();
 
         //Primera producción: PARAMETERS_OPC -> PARAMETERS
         if (( this.preanalisis.tipo == TipoToken.IDENTIFIER )) {
              
-            paraOpc = this.PARAMETERS();
             
+            PARAMETERS(nameList);
         }
 
-        return paraOpc;
-        
+        return nameList;
         //Segunda producción: PARAMETERS_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
 
     //PARAMETERS -> id PARAMETERS_2
-    private Expression PARAMETERS() throws Exception {
+    private void PARAMETERS(List<Token> identificadores) throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion PARAMETRS"); //Vereficamos que no haya errores
 
-        List<Expression> listPara = new ArrayList<>();
-
         match(TipoToken.IDENTIFIER);
-
-        PARAMETERS_2(listPara);
-
-        return listPara;
+        Token antes = previous();
+        identificadores.add(antes);
+        PARAMETERS_2(identificadores);
 
     }
 
     //PARAMETERS_2 -> , id PARAMETERS_2 | Ɛ
-    private void PARAMETERS_2(List<Expression> identificadores) throws Exception {
+    private void PARAMETERS_2(List<Token> identificadores) throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion PARAMETRS_2"); //Vereficamos que no haya errores
 
@@ -889,8 +872,7 @@ public class ASDR implements Parser{
             match(TipoToken.COMMA);
             match(TipoToken.IDENTIFIER);
             Token antes = previous();
-            Expression variable = ExprVariable(antes)
-            identificadores.add(variable);
+            identificadores.add(antes);
             PARAMETERS_2(identificadores);
         }
 
