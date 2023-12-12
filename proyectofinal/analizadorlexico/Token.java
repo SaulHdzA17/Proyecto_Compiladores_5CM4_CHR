@@ -18,7 +18,7 @@ public class Token {
         this.literal = literal;
     }
 
-    Object getLiteral(){
+    public Object getLiteral(){
 
         return this.literal;
     }

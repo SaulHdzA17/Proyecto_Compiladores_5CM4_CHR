@@ -717,27 +717,31 @@ public class ASDR implements Parser{
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
+        List<Expression> call = new ArrayList<>();
+
         if (( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
          || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
             
             PRIMARY();
-            CALL_2();
+            CALL_2(call);
         }
+
+        return new ExprCallFunction(/*Retorno de PRIMARY */, call);
     }
 
     //CALL_2 -> ( ARGUMENTS_OPC ) CALL_2 | Ɛ
-    private void CALL_2() {
+    private void CALL_2(List<Expression> call2) {
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
         //Primera producción: CALL_2 -> ( ARGUMENTS_OPC ) CALL_2
         if (( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
             match((TipoToken.LEFT_PAREN));
-            ARGUMENTS_OPC();
+            call2 = ARGUMENTS_OPC();
             match((TipoToken.RIGHT_PAREN));
-            CALL_2();
+            CALL_2(call2);
         }
         //Segunda producción: CALL_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
