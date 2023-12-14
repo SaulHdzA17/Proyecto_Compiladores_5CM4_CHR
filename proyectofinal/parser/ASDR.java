@@ -713,36 +713,30 @@ public class ASDR implements Parser{
     }
 
     //CALL -> PRIMARY CALL_2
-    private void CALL() {
+    private Expression CALL() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        //if(hayErrores) return; //Vereficamos que no haya errores
+        // throw new ...
 
-        List<Expression> call = new ArrayList<>();
-
-        if (( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-            
-            PRIMARY();
-            CALL_2(call);
-        }
-
-        return new ExprCallFunction(/*Retorno de PRIMARY */, call);
+        Expression expr = PRIMARY();
+        return CALL_2(expr);
     }
 
     //CALL_2 -> ( ARGUMENTS_OPC ) CALL_2 | Ɛ
-    private void CALL_2(List<Expression> call2) {
+    private Expression CALL_2(Expression expr) throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        //if(hayErrores) return; //Vereficamos que no haya errores
 
         //Primera producción: CALL_2 -> ( ARGUMENTS_OPC ) CALL_2
         if (( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
             match((TipoToken.LEFT_PAREN));
-            call2 = ARGUMENTS_OPC();
+            List<Expression> arguments = ARGUMENTS_OPC();
             match((TipoToken.RIGHT_PAREN));
-            CALL_2(call2);
+
+            return new ExprCallFunction(expr, arguments);
         }
+
+        return expr;
         //Segunda producción: CALL_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
