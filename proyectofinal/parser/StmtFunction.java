@@ -18,6 +18,4 @@ public class StmtFunction extends Statement {
         this.body = body;
     }
 
-    public StmtFunction(Token name2, List<Token> parame, Statement block) {
-    }
 }

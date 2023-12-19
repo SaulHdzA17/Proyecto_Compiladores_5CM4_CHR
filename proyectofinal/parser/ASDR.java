@@ -444,15 +444,15 @@ public class ASDR implements Parser{
     }
 
     //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
-    private Expression ASSIGNMENT_OP(Expression expr) throws Exception {
+    private Expression ASSIGNMENT_OP( Expression assiOP ) throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FASSIGNMENT_OP"); //Vereficamos que no haya errores
 
         //Primera producción: ASSIGNMENT_OPC -> = EXPRESSION
         if((this.preanalisis.tipo == TipoToken.EQUAL)) {
 
-            if(expr instanceof ExprVariable){
-                Token t = ((ExprVariable) expr).name;
+            if(assiOP instanceof ExprVariable){
+                Token t = ((ExprVariable) assiOP).name;
 
                 match(TipoToken.EQUAL);
                 Expression exprAssign = EXPRESSION();
@@ -461,12 +461,11 @@ public class ASDR implements Parser{
 
             }
             else{
-                throw new Exception("");
-            }
-
-
-            return expr;
+                throw new Exception("Error en la funcion ASSIGNMENT_OP");
+            }            
         }
+
+        return assiOP;
         //Segunda producción: ASSIGNMENT_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
     }
@@ -620,25 +619,20 @@ public class ASDR implements Parser{
     }
 
     //TERM -> FACTOR TERM_2
-    private void TERM() {
+    private void TERM() throws Exception {
+        //Posible gruping
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion TERM"); //Vereficamos que no haya errores
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+        FACTOR();
+        TERM_2();
 
-            FACTOR();
-            TERM_2();
-         }
     }
 
     //TERM_2 -> - FACTOR TERM_2 | + FACTOR TERM_2 | Ɛ
-    private void TERM_2() {
+    private void TERM_2() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion TERM_2"); //Vereficamos que no haya errores
 
         //Primera producción: TERM_2 -> - FACTOR TERM_2
         if(( this.preanalisis.tipo == TipoToken.MINUS )) {
@@ -659,23 +653,17 @@ public class ASDR implements Parser{
     //FACTOR -> UNARY FACTOR_2
     private void FACTOR() throws Exception {
 
-        //if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FACTOR"); //Vereficamos que no haya errores
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-
-            Expression expr = UNARY();
-            FACTOR_2(expr);
-         }
+        Expression expr = UNARY();
+        FACTOR_2(expr);
+            
     }
 
     //FACTOR_2 -> / UNARY FACTOR_2 | * UNARY FACTOR_2 | Ɛ
     private Expression FACTOR_2(Expression izq) throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) ; //Vereficamos que no haya errores
 
         //Primera producción: FACTOR_2 -> / UNARY FACTOR_2
         if (( this.preanalisis.tipo == TipoToken.SLASH )) {
@@ -838,8 +826,6 @@ public class ASDR implements Parser{
     private void FUNCTIONS() throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion FUNCTIONS"); //Vereficamos que no haya errores
-
-
 
         //Primera producción: FUNCTIONS -> FUN_DECL FUNCTIONS
         if (( this.preanalisis.tipo == TipoToken.FUN )) {
