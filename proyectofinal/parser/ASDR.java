@@ -402,7 +402,7 @@ public class ASDR implements Parser{
     }
 
     //BLOCK -> { DECLARATION }
-    private Statement BLOCK(List<Statement> state) throws Exception{
+    private StmtBlock BLOCK(List<Statement> state) throws Exception{
 
         if(hayErrores) throw new Exception("Error en la funcion BLOCK"); //Vereficamos que no haya errores
 
@@ -421,28 +421,15 @@ public class ASDR implements Parser{
     private Expression EXPRESSION() throws Exception {
 
         //Retorna una Asiganción
-        if(hayErrores) throw new Exception("Error en la funcion Expression"); //Vereficamos que no haya errores
+        //if(hayErrores) throw new Exception("Error en la funcion Expression"); //Vereficamos que no haya errores
 
-        Expression expre;
-
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-
-            expre = ASSIGNMENT();
-
-        }
-
-        return expre;
-
+        return ASSIGNMENT();
     }
 
     //ASSIGNMENT -> LOGIC_OR ASSIGNMENT_OPC
-    private void ASSIGNMENT() {
+    private Expression ASSIGNMENT() {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        //if(hayErrores) return; //Vereficamos que no haya errores
 
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
          || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
@@ -450,21 +437,35 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
             
-            LOGIC_OR();
-            ASSIGNMENT_OP();
+            Expression expr = LOGIC_OR();
+            return ASSIGNMENT_OP(expr);
 
         }
     }
 
     //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
-    private void ASSIGNMENT_OP() {
+    private Expression ASSIGNMENT_OP(Expression expr) throws Exception {
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
         //Primera producción: ASSIGNMENT_OPC -> = EXPRESSION
         if((this.preanalisis.tipo == TipoToken.EQUAL)) {
-            match(TipoToken.EQUAL);
-            EXPRESSION();
+
+            if(expr instanceof ExprVariable){
+                Token t = ((ExprVariable) expr).name;
+
+                match(TipoToken.EQUAL);
+                Expression exprAssign = EXPRESSION();
+
+                return new ExprAssign(t, exprAssign);
+
+            }
+            else{
+                throw new Exception("");
+            }
+
+
+            return expr;
         }
         //Segunda producción: ASSIGNMENT_OPC -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
@@ -656,9 +657,9 @@ public class ASDR implements Parser{
     }
 
     //FACTOR -> UNARY FACTOR_2
-    private void FACTOR() {
+    private void FACTOR() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        //if(hayErrores) return; //Vereficamos que no haya errores
 
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
          || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
@@ -666,30 +667,35 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
 
-            UNARY();
-            FACTOR_2();
+            Expression expr = UNARY();
+            FACTOR_2(expr);
          }
     }
 
     //FACTOR_2 -> / UNARY FACTOR_2 | * UNARY FACTOR_2 | Ɛ
-    private void FACTOR_2() {
+    private Expression FACTOR_2(Expression izq) throws Exception {
 
         if(hayErrores) return; //Vereficamos que no haya errores
 
         //Primera producción: FACTOR_2 -> / UNARY FACTOR_2
         if (( this.preanalisis.tipo == TipoToken.SLASH )) {
             match(TipoToken.SLASH);
-            UNARY(); 
-            FACTOR_2();
+            Token operador = previous();
+            Expression der = UNARY();
+            ExprBinary expB = new ExprBinary(izq, operador, der);
+            return FACTOR_2(expB);
         }
         //Segunda producción: FACTOR_2 -> * UNARY FACTOR_2
         else if (( this.preanalisis.tipo == TipoToken.STAR )) {
             match(TipoToken.STAR);
-            UNARY(); 
-            FACTOR_2();
+            Token operador = previous();
+            Expression der = UNARY();
+            ExprBinary expB = new ExprBinary(izq, operador, der);
+            return FACTOR_2(expB);
         }
         //Tercera producción: FACTOR_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+        return izq;
     }
 
     //UNARY -> ! UNARY | - UNARY | CALL
@@ -698,19 +704,19 @@ public class ASDR implements Parser{
         if(hayErrores) throw new Exception("Error en la funcion UNARY"); //Vereficamos que no haya errores
 
         Token operador = null;
-        Expression llamada = null;
 
         //Primera producción: UNARY -> ! UNARY
         if(( this.preanalisis.tipo == TipoToken.BANG )) {
             match(TipoToken.BANG);
             operador = this.previous();
-            UNARY();
+            Expression expr = UNARY();
+            return new ExprUnary(operador, expr);
         }
         //Segunda producción: UNARY -> - UNARY
         else if (( this.preanalisis.tipo == TipoToken.MINUS )) {
             match(TipoToken.MINUS);
-            operador = this.previous();
-            UNARY();
+            Expression expr = UNARY();
+            return new ExprUnary(operador, expr);
         }
         //Tercera producción:  UNARY -> CALL
         else if (( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
@@ -718,11 +724,12 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
             
-            llamada = CALL();
+            return CALL();
 
         }
 
-        return new ExprUnary(operador, llamada);
+        throw new Exception("Error en la funcion UNARY");
+        //return new ExprUnary(operador, llamada);
     
     }
 
@@ -799,11 +806,11 @@ public class ASDR implements Parser{
             match(TipoToken.LEFT_PAREN);
             Expression expr = EXPRESSION();
             match(TipoToken.RIGHT_PAREN);
-            return expr;
+            return new ExprGrouping(expr);
         
         }
 
-        return null;
+        throw new Exception("Error en Primary");
     }
 
     //*********** OTRAS ********************
@@ -821,7 +828,7 @@ public class ASDR implements Parser{
         List<Token> parame = PARAMETERS_OPC();
         match(TipoToken.RIGHT_PAREN);
         List<Statement> state = new ArrayList<>();
-        Statement block = BLOCK(state);
+        StmtBlock block = BLOCK(state);
 
         return new StmtFunction( name, parame, block);
 
