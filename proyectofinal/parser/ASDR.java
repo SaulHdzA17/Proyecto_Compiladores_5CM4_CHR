@@ -402,7 +402,7 @@ public class ASDR implements Parser{
     }
 
     //BLOCK -> { DECLARATION }
-    private StmtBlock BLOCK(List<Statement> state) throws Exception{
+    private Statement BLOCK(List<Statement> state) throws Exception{
 
         if(hayErrores) throw new Exception("Error en la funcion BLOCK"); //Vereficamos que no haya errores
 
@@ -697,8 +697,8 @@ public class ASDR implements Parser{
 
         if(hayErrores) throw new Exception("Error en la funcion UNARY"); //Vereficamos que no haya errores
 
-        Token operador;
-        Expression llamada;
+        Token operador = null;
+        Expression llamada = null;
 
         //Primera producción: UNARY -> ! UNARY
         if(( this.preanalisis.tipo == TipoToken.BANG )) {
@@ -799,9 +799,11 @@ public class ASDR implements Parser{
             match(TipoToken.LEFT_PAREN);
             Expression expr = EXPRESSION();
             match(TipoToken.RIGHT_PAREN);
-            return new ExpreGrouping(expr);
+            return expr;
         
         }
+
+        return null;
     }
 
     //*********** OTRAS ********************
@@ -819,7 +821,7 @@ public class ASDR implements Parser{
         List<Token> parame = PARAMETERS_OPC();
         match(TipoToken.RIGHT_PAREN);
         List<Statement> state = new ArrayList<>();
-        StmtBlock block = BLOCK(state);
+        Statement block = BLOCK(state);
 
         return new StmtFunction( name, parame, block);
 
