@@ -697,8 +697,8 @@ public class ASDR implements Parser{
 
         if(hayErrores) throw new Exception("Error en la funcion UNARY"); //Vereficamos que no haya errores
 
-        Token operador;
-        Expression llamada;
+        Token operador = null;
+        Expression llamada = null;
 
         //Primera producción: UNARY -> ! UNARY
         if(( this.preanalisis.tipo == TipoToken.BANG )) {
@@ -799,9 +799,11 @@ public class ASDR implements Parser{
             match(TipoToken.LEFT_PAREN);
             Expression expr = EXPRESSION();
             match(TipoToken.RIGHT_PAREN);
-            return new ExpreGrouping(expr);
+            return expr;
         
         }
+
+        return null;
     }
 
     //*********** OTRAS ********************
