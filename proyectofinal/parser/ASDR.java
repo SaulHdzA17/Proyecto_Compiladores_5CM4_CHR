@@ -802,9 +802,6 @@ public class ASDR implements Parser{
             return new ExpreGrouping(expr);
         
         }
-        
-        throw new Exception("Error en la funcion PRIMARY");
-
     }
 
     //*********** OTRAS ********************
