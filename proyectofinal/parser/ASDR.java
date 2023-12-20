@@ -446,7 +446,6 @@ public class ASDR implements Parser{
     //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
     private Expression ASSIGNMENT_OP( Expression assiOP ) throws Exception{
         
-
         if(hayErrores) throw new Exception("Error en la funcion FASSIGNMENT_OP"); //Vereficamos que no haya errores
 
         //Primera producción: ASSIGNMENT_OPC -> = EXPRESSION
