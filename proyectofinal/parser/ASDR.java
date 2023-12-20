@@ -395,7 +395,7 @@ public class ASDR implements Parser{
 
         match(TipoToken.WHILE);
         match(TipoToken.LEFT_PAREN);
-        EXPRESSION();
+        Expression expr = EXPRESSION();
         match(TipoToken.RIGHT_PAREN);
         STATEMENT();
 
@@ -445,6 +445,7 @@ public class ASDR implements Parser{
 
     //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
     private Expression ASSIGNMENT_OP( Expression assiOP ) throws Exception{
+        
 
         if(hayErrores) throw new Exception("Error en la funcion FASSIGNMENT_OP"); //Vereficamos que no haya errores
 
@@ -471,199 +472,230 @@ public class ASDR implements Parser{
     }
 
     //LOGIC_OR -> LOGIC_AND LOGIC_OR_2
-    private void LOGIC_OR() {
+    private List<Expression> LOGIC_OR() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR JUNTO CON PARAMETERS_OPC PARAMETERS ARGUMENTS_OPC*/
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR"); //Vereficamos que no haya errores
 
-            LOGIC_AND(); 
-            LOGIC_OR_2();
-         }
+        List<Expression> logicOR = new ArrayList<>();
+        Expression logAnd = LOGIC_AND();
+        logicOR.add(logAnd);
+        LOGIC_OR_2(logicOR);
+        return logicOR;
+        
     }
 
-    //LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2 | Ɛ
-    private void LOGIC_OR_2() {
+    //LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2 | Ɛ //LISTA DE LOGIC_AND (LOGIC_AND or LOGIC_AND)
+    private List<Expression> LOGIC_OR_2(List<Expression> listAnd ) throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
-
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR_2"); //Vereficamos que no haya errores
+        
         //Primera producción: LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2
         if ((this.preanalisis.tipo == TipoToken.OR)) {
             match(TipoToken.OR);
-            LOGIC_AND();
-            LOGIC_OR_2();
+            Expression logAnd = LOGIC_AND();
+            listAnd.add(logAnd);
+            return LOGIC_OR_2(listAnd);
         }
         //Segunda producción: LOGIC_OR_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+        
+        return listAnd;
+
     }
 
     //LOGIC_AND -> EQUALITY LOGIC_AND_2
-    private void LOGIC_AND() {
+    private Expression LOGIC_AND() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_AND"); //Vereficamos que no haya errores
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
+        Expression equ = EQUALITY(); 
+        return LOGIC_AND_2(equ);
 
-            EQUALITY(); 
-            LOGIC_AND_2();
-         }
     }
 
     //LOGIC_AND_2 -> and EQUALITY LOGIC_AND_2 | Ɛ
-    private void LOGIC_AND_2() {
+    private Expression LOGIC_AND_2(Expression left) throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_AND_2"); //Vereficamos que no haya errores
+
+        Token opl;
+        Expression right;
 
         //Primera producción: LOGIC_AND_2 -> and EQUALITY LOGIC_AND_2
         if((this.preanalisis.tipo == TipoToken.AND)) {
             match(TipoToken.AND);
-            EQUALITY(); 
-            LOGIC_AND_2();
+            opl = this.previous();
+            right = EQUALITY(); 
+            Expression newLeft = new ExprLogical(left, opl, right);
+            return LOGIC_AND_2(newLeft);
         }
         //Segunda producción: LOGIC_AND_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+        return left;
     }
 
     //EQUALITY -> COMPARISON EQUALITY_2
-    private void EQUALITY() {
+    private Expression EQUALITY() throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
+        if(hayErrores) throw new Exception("Error en la funcion EQUALITY"); //Vereficamos que no haya errores
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-
-            COMPARISON();
-            EQUALITY_2();
-         }
+        Expression comp = COMPARISON();
+        return EQUALITY_2(comp);
+        
     }
 
     //EQUALITY_2 -> != COMPARISON EQUALITY_2 | == COMPARISON EQUALITY_2 | Ɛ
-    private void EQUALITY_2() {
+    private Expression EQUALITY_2(Expression left) throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
 
+        if(hayErrores) throw new Exception("Error en la funcion EQUALITY_2"); //Vereficamos que no haya errores
+
+        Token op;
+        Expression right;
+        
         //Primera producción: EQUALITY_2 -> != COMPARISON EQUALITY_2
         if ((this.preanalisis.tipo == TipoToken.BANG_EQUAL)) {
             match(TipoToken.BANG_EQUAL);
-            COMPARISON(); 
-            EQUALITY_2();
+            op = this.previous();
+            right = COMPARISON();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return EQUALITY_2(newLeft);
         }
         //Segunda producción: EQUALITY_2 -> == COMPARISON EQUALITY_2
         else if ((this.preanalisis.tipo == TipoToken.EQUAL_EQUAL)) {
             match(TipoToken.EQUAL_EQUAL);
-            COMPARISON();
-            EQUALITY_2();
+            op = this.previous();
+            right = COMPARISON();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return EQUALITY_2(newLeft);
         }
         //Tercera producción: EQUALITY_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+        return left;
+
     }
 
     //COMPARISON -> TERM COMPARISON_2
-    private void COMPARISON() {
-
-        if(hayErrores) return; //Vereficamos que no haya errores
-
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-
-            TERM();
-            COMPARISON_2();
-         }
+    private Expression COMPARISON() throws Exception {
+        /*CHECAR*/
+        if(hayErrores) throw new Exception("Error en la funcion COMPARISON"); //Vereficamos que no haya errores
+    
+        Expression expr = TERM();
+        return COMPARISON_2(expr);
+    
     }
 
     //COMPARISON_2 -> > TERM COMPARISON_2 | >= TERM COMPARISON_2 | < TERM COMPARISON_2 | <= TERM COMPARISON_2 | Ɛ
-    private void COMPARISON_2() {
+    private Expression COMPARISON_2( Expression left ) throws Exception {
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
+
+        if(hayErrores) throw new Exception("Error en la funcion COMPARISON_2"); //Vereficamos que no haya errores
+
+        Token op;
+        Expression right; 
 
         //Primera producción: COMPARISON_2 -> > TERM COMPARISON_2
         if ((this.preanalisis.tipo == TipoToken.GREATER)) {
             match(TipoToken.GREATER);
-            TERM();
-            COMPARISON_2();
+            op = this.previous();
+            right = TERM();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return COMPARISON_2(newLeft);
         }
         //Segunda producción: COMPARISON_2 -> >= TERM COMPARISON_2
         else if ((this.preanalisis.tipo == TipoToken.GREATER_EQUAL)) {
             match(TipoToken.GREATER_EQUAL);
-            TERM();
-            COMPARISON_2();
+            op = this.previous();
+            right = TERM();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return COMPARISON_2(newLeft);
         }
         //Tercera producción: COMPARISON_2 -> < TERM COMPARISON_2
         else if((this.preanalisis.tipo == TipoToken.LESS)) {
             match(TipoToken.LESS);
-            TERM();
-            COMPARISON_2();
+            op = this.previous();
+            right = TERM();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return COMPARISON_2(newLeft);
         }
         //Cuarta producción: COMPARISON_2 -> <= TERM COMPARISON_2
         else if ((this.preanalisis.tipo == TipoToken.LESS_EQUAL)) {
             match(TipoToken.LESS_EQUAL);
-            TERM();
-            COMPARISON_2();
+            op = this.previous();
+            right = TERM();
+            Expression newLeft = new ExprLogical(left, op, right);
+            return COMPARISON_2(newLeft);
         }
         //Quinta producción: COMPARISON_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+
+        return left;
+
     }
 
     //TERM -> FACTOR TERM_2
-    private void TERM() throws Exception {
-        //Posible gruping
+    private Expression TERM() throws Exception {
+        /*CHECAR */
 
         if(hayErrores) throw new Exception("Error en la funcion TERM"); //Vereficamos que no haya errores
 
-        FACTOR();
-        TERM_2();
+        Expression fact = FACTOR();
+        return TERM_2(fact);
 
     }
 
     //TERM_2 -> - FACTOR TERM_2 | + FACTOR TERM_2 | Ɛ
-    private void TERM_2() throws Exception {
+    private Expression TERM_2( Expression izq ) throws Exception {
+
+        /*CHECAR*/
 
         if(hayErrores) throw new Exception("Error en la funcion TERM_2"); //Vereficamos que no haya errores
+
+        Token simbolo;
+        Expression dere;
 
         //Primera producción: TERM_2 -> - FACTOR TERM_2
         if(( this.preanalisis.tipo == TipoToken.MINUS )) {
             match(TipoToken.MINUS);
-            FACTOR();
-            TERM_2();
+            simbolo = this.previous();
+            dere = FACTOR();//Exprecion binaria
+            Expression newIzq = new ExprBinary(izq, simbolo, dere);
+            return TERM_2(newIzq);
         }
         //Segunda producción: TERM_2 -> + FACTOR TERM_2
         else if(( this.preanalisis.tipo == TipoToken.PLUS )) {
             match(TipoToken.PLUS);
-            FACTOR();
-            TERM_2();
+            simbolo = this.previous();
+            dere = FACTOR();//Exprecion binaria
+            Expression newIzq = new ExprBinary(izq, simbolo, dere);
+            return TERM_2(newIzq);
         }
         //Tercera producción: TERM_2 -> Ɛ
         /*Como aparece Ɛ, nos manda error al estar vacío*/
+
+        return izq;
+
     }
 
     //FACTOR -> UNARY FACTOR_2
-    private void FACTOR() throws Exception {
+    private Expression FACTOR() throws Exception {
 
         if(hayErrores) throw new Exception("Error en la funcion FACTOR"); //Vereficamos que no haya errores
 
-        Expression expr = UNARY();
-        FACTOR_2(expr);
+        Expression fact = UNARY();
+        return FACTOR_2(fact);
             
     }
 
     //FACTOR_2 -> / UNARY FACTOR_2 | * UNARY FACTOR_2 | Ɛ
     private Expression FACTOR_2(Expression izq) throws Exception {
 
-        if(hayErrores) ; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FACTOR_2"); //Vereficamos que no haya errores
 
         //Primera producción: FACTOR_2 -> / UNARY FACTOR_2
         if (( this.preanalisis.tipo == TipoToken.SLASH )) {
