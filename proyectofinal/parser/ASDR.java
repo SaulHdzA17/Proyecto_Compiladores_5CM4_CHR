@@ -225,12 +225,14 @@ public class ASDR implements Parser{
         match(TipoToken.RIGHT_PAREN);
         STATEMENT();
 
+        StmtLoop(Expression condition, Statement body)
+
     }
 
     //FOR_STMT_1 -> VAR_DECL | EXPR_STMT | ;
-    private void FOR_STMT_1(){
+    private Statement FOR_STMT_1() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_2"); //Vereficamos que no haya errores
         
         /*Primera proyección  FOR_STMT_1 -> VAR_DECL (-> * -> VAR  )  */
         if( this.preanalisis.tipo == TipoToken.VAR ) {
@@ -244,7 +246,7 @@ public class ASDR implements Parser{
                || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) || ( this.preanalisis.tipo == TipoToken.NULL ) 
                || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/  ){
 
-            EXPR_STMT();
+            return EXPR_STMT();
 
         /*Tercera proyección  FOR_STMT_1 -> ; */
         }else if( this.preanalisis.tipo == TipoToken.SEMICOLON ){
@@ -255,7 +257,7 @@ public class ASDR implements Parser{
         
             //De cualquier otro modo se manda error
             hayErrores = true;
-            System.out.println("Error en la declaracion del FOR");
+            throw new Exception("Error en la funcion FOR_STMT_1"); 
         
         }
     
@@ -263,9 +265,9 @@ public class ASDR implements Parser{
 
 
     //FOR_STMT_2 -> EXPRESSION; | ;
-    private void FOR_STMT_2(){
+    private Expression FOR_STMT_2() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_2"); //Vereficamos que no haya errores
 
         /*Primera proyección  FOR_STMT_2 -> EXPRESSION; (-> * -> P(EXPR_STMT)  )  */
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -274,28 +276,29 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/ ){
             
-            EXPRESSION();
+            Expression expr = EXPRESSION();
             match(TipoToken.SEMICOLON);
+            return expr;
         
         /*Segunda proyección  FOR_STMT_2 -> ; */
         }else if( this.preanalisis.tipo == TipoToken.SEMICOLON ){
              
             match(TipoToken.SEMICOLON);
+            return null;
 
         }else{
-        
            //De cualquier otro modo se manda error
            hayErrores = true;
-           System.out.println("Se esperaba una Expreccion");
+           throw new Exception("Error en la funcion FOR_STMT_2"); 
         
         }
 
     }
 
     //FOR_STMT_3 -> EXPRESSION | Ɛ
-    private void FOR_STMT_3(){
+    private Statement FOR_STMT_3() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_3"); //Vereficamos que no haya errores
 
         /*Primera proyección  FOR_STMT_3 -> EXPRESSION (-> * -> P(EXPR_STMT)  )  */
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -304,9 +307,11 @@ public class ASDR implements Parser{
          || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
          || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPR_STMT)*/ ){
             
-            EXPRESSION();
+            return EXPRESSION();
         
         }
+
+        return null;
 
         /*Segunda proyección  FOR_STMT_3 -> Ɛ */
         /*Como aparece Ɛ, nos manda error al estar vacío*/
@@ -386,9 +391,15 @@ public class ASDR implements Parser{
 
         /*Primera proyección  RETURN_EXP_OPC -> EXPRESSION (-> * -> P(EXPRESSION)  )  */
 
-        if(preanalisis == conjunto_primero_de_expression){
-            return EXPRESSION();
-        }
+        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
+        || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
+        || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
+        || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
+        || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPRESSION)*/ ){
+           
+           return EXPRESSION();
+       
+       }
         
         return null;
         
@@ -605,7 +616,7 @@ public class ASDR implements Parser{
             match(TipoToken.BANG_EQUAL);
             op = this.previous();
             right = COMPARISON();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return EQUALITY_2(newLeft);
         }
         //Segunda producción: EQUALITY_2 -> == COMPARISON EQUALITY_2
@@ -613,7 +624,7 @@ public class ASDR implements Parser{
             match(TipoToken.EQUAL_EQUAL);
             op = this.previous();
             right = COMPARISON();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return EQUALITY_2(newLeft);
         }
         //Tercera producción: EQUALITY_2 -> Ɛ
@@ -647,7 +658,7 @@ public class ASDR implements Parser{
             match(TipoToken.GREATER);
             op = this.previous();
             right = TERM();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return COMPARISON_2(newLeft);
         }
         //Segunda producción: COMPARISON_2 -> >= TERM COMPARISON_2
@@ -655,7 +666,7 @@ public class ASDR implements Parser{
             match(TipoToken.GREATER_EQUAL);
             op = this.previous();
             right = TERM();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return COMPARISON_2(newLeft);
         }
         //Tercera producción: COMPARISON_2 -> < TERM COMPARISON_2
@@ -663,7 +674,7 @@ public class ASDR implements Parser{
             match(TipoToken.LESS);
             op = this.previous();
             right = TERM();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return COMPARISON_2(newLeft);
         }
         //Cuarta producción: COMPARISON_2 -> <= TERM COMPARISON_2
@@ -671,7 +682,7 @@ public class ASDR implements Parser{
             match(TipoToken.LESS_EQUAL);
             op = this.previous();
             right = TERM();
-            Expression newLeft = new ExprLogical(left, op, right);
+            Expression newLeft = new ExprBinary(left, op, right);
             return COMPARISON_2(newLeft);
         }
         //Quinta producción: COMPARISON_2 -> Ɛ
