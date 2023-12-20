@@ -314,29 +314,34 @@ public class ASDR implements Parser{
     }
     
     //IF_STMT -> if (EXPRESSION) STATEMENT ELSE_STATEMEN
-    private void IF_STMT(){
+    private Statement IF_STMT() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
+        if(hayErrores) throw new Exception("Error en la funcion IF_STMT"); //Vereficamos que no haya errores
 
         match(TipoToken.IF);
         match(TipoToken.LEFT_PAREN);
-        EXPRESSION();
+        Expression cond = EXPRESSION();
         match(TipoToken.RIGHT_PAREN);
-        STATEMENT();
-        ELSE_STATEMENT();
+        Statement thenIf = STATEMENT();
+        Statement thenElse;
+        ELSE_STATEMENT(thenElse);
+
+        return new StmtIf(cond, thenIf, thenElse);
 
     }
     
     //ELSE_STATEMENT -> else STATEMENT | Ɛ
-    private void ELSE_STATEMENT(){
+    private void ELSE_STATEMENT(Statement elseStmt) throws Exception{
+        /*CHECAR*/
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion ELSE_STMT"); //Vereficamos que no haya errores
 
         /*Primera proyección  ELSE_STATEMENT -> else STATEMENT  */
         if( this.preanalisis.tipo == TipoToken.ELSE ){
 
             match(TipoToken.ELSE);
-            STATEMENT();
+            elseStmt = STATEMENT();
             
         }
 
@@ -346,58 +351,60 @@ public class ASDR implements Parser{
     }
 
     //PRINT_STMT -> print EXPRESSION ;
-    private void PRINT_STMT(){
+    private Statement PRINT_STMT() throws Exception{
+        /*CHECAR*/
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion PRINT_STMT"); //Vereficamos que no haya errores
         
         match(TipoToken.PRINT);
-        EXPRESSION();
+        Expression expr = EXPRESSION();
         match(TipoToken.SEMICOLON);
+        return new StmtPrint(expr);
 
     }
     
     //RETURN_STMT -> return RETURN_EXP_OPC ;
-    private void RETURN_STMT(){
+    private Statement RETURN_STMT() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
+
+        if(hayErrores) throw new Exception("Error en la funcion RETURN_STMT"); //Vereficamos que no haya errores
         
         match(TipoToken.RETURN);
-        RETURN_EXP_OPC();
+        Statement re = RETURN_EXP_OPC();
         match(TipoToken.SEMICOLON);
+        return re;
 
     }
 
     //RETURN_EXP_OPC -> EXPRESSION | Ɛ
-    private void RETURN_EXP_OPC(){
+    private Statement RETURN_EXP_OPC() throws Exception{
+        /*CHECAR*/
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        if(hayErrores) throw new Exception("Error en la funcion RETURN_EXP_OPC"); //Vereficamos que no haya errores
 
         /*Primera proyección  RETURN_EXP_OPC -> EXPRESSION (-> * -> P(EXPRESSION)  )  */
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN ) /*P(EXPRESSION)*/ ){
-            
-            EXPRESSION();
+        return new StmtReturn(EXPRESSION());
         
-        }
-
         /*Segunda proyección  RETURN_EXP_OPC -> Ɛ */
         /*Como aparece Ɛ, nos manda error al estar vacío*/
 
     }
 
     //WHILE_STMT -> while ( EXPRESSION ) STATEMENT
-    private void WHILE_STMT(){
+    private Statement WHILE_STMT() throws Exception{
 
-        if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR*/
+
+        if(hayErrores) throw new Exception("Error en la funcion WHILE_STMT"); //Vereficamos que no haya errores
 
         match(TipoToken.WHILE);
         match(TipoToken.LEFT_PAREN);
         Expression expr = EXPRESSION();
         match(TipoToken.RIGHT_PAREN);
-        STATEMENT();
+        Statement body = STATEMENT();
+
+        return new StmtLoop(expr, body);
 
     }
 
@@ -427,20 +434,16 @@ public class ASDR implements Parser{
     }
 
     //ASSIGNMENT -> LOGIC_OR ASSIGNMENT_OPC
-    private Expression ASSIGNMENT() {
+    private Expression ASSIGNMENT() throws Exception {
 
-        //if(hayErrores) return; //Vereficamos que no haya errores
+        /*CHECAR */
 
-        if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
-         || ( this.preanalisis.tipo == TipoToken.TRUE )  || ( this.preanalisis.tipo == TipoToken.FALSE )
-         || ( this.preanalisis.tipo == TipoToken.NULL )  || ( this.preanalisis.tipo == TipoToken.NUMBER )
-         || ( this.preanalisis.tipo == TipoToken.STRING )  || ( this.preanalisis.tipo == TipoToken.IDENTIFIER ) 
-         || ( this.preanalisis.tipo == TipoToken.LEFT_PAREN )) {
-            
-            Expression expr = LOGIC_OR();
-            return ASSIGNMENT_OP(expr);
+        if(hayErrores) throw new Exception("Error en la funcion ASSIGNMENT"); //Vereficamos que no haya errores
 
-        }
+        Expression expr = LOGIC_OR();
+        return ASSIGNMENT_OP(expr);
+
+    
     }
 
     //ASSIGNMENT_OPC -> = EXPRESSION | Ɛ
@@ -471,9 +474,22 @@ public class ASDR implements Parser{
     }
 
     //LOGIC_OR -> LOGIC_AND LOGIC_OR_2
-    private List<Expression> LOGIC_OR() throws Exception {
+    
+    private Expression LOGIC_OR() throws Exception {
 
         /*CHECAR JUNTO CON PARAMETERS_OPC PARAMETERS ARGUMENTS_OPC*/
+
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR"); //Vereficamos que no haya errores
+
+        Expression logAnd = LOGIC_AND();
+        return LOGIC_OR_2(logAnd);
+        
+        
+    }
+    
+    /*private List<Expression> LOGIC_OR() throws Exception {
+
+        /*CHECAR JUNTO CON PARAMETERS_OPC PARAMETERS ARGUMENTS_OPC
 
         if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR"); //Vereficamos que no haya errores
 
@@ -483,10 +499,32 @@ public class ASDR implements Parser{
         LOGIC_OR_2(logicOR);
         return logicOR;
         
-    }
+    }*/
 
     //LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2 | Ɛ //LISTA DE LOGIC_AND (LOGIC_AND or LOGIC_AND)
-    private List<Expression> LOGIC_OR_2(List<Expression> listAnd ) throws Exception{
+    private Expression LOGIC_OR_2(Expression left ) throws Exception{
+
+        if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR_2"); //Vereficamos que no haya errores
+        
+        Token or;
+        Expression right;
+
+        //Primera producción: LOGIC_OR_2 -> or LOGIC_AND LOGIC_OR_2
+        if ((this.preanalisis.tipo == TipoToken.OR)) {
+            match(TipoToken.OR);
+            or = this.previous();
+            right = LOGIC_AND();
+            Expression newLeft = new ExprLogical(left, or, right);
+            return LOGIC_OR_2(newLeft);
+        }
+        //Segunda producción: LOGIC_OR_2 -> Ɛ
+        /*Como aparece Ɛ, nos manda error al estar vacío*/
+
+        return left;
+
+    }
+        
+    /*private List<Expression> LOGIC_OR_2(List<Expression> listAnd ) throws Exception{
 
         if(hayErrores) throw new Exception("Error en la funcion LOGIC_OR_2"); //Vereficamos que no haya errores
         
@@ -498,11 +536,11 @@ public class ASDR implements Parser{
             return LOGIC_OR_2(listAnd);
         }
         //Segunda producción: LOGIC_OR_2 -> Ɛ
-        /*Como aparece Ɛ, nos manda error al estar vacío*/
+        /*Como aparece Ɛ, nos manda error al estar vacío
         
         return listAnd;
 
-    }
+    }*/
 
     //LOGIC_AND -> EQUALITY LOGIC_AND_2
     private Expression LOGIC_AND() throws Exception {
