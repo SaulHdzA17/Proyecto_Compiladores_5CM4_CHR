@@ -332,7 +332,7 @@ public class ASDR implements Parser{
     }
     
     //ELSE_STATEMENT -> else STATEMENT | Ɛ
-    private void ELSE_STATEMENT(Statement elseStmt) throws Exception{
+    private Statement ELSE_STATEMENT(Statement elseStmt) throws Exception{
         /*CHECAR*/
 
         if(hayErrores) throw new Exception("Error en la funcion ELSE_STMT"); //Vereficamos que no haya errores
@@ -342,8 +342,9 @@ public class ASDR implements Parser{
 
             match(TipoToken.ELSE);
             elseStmt = STATEMENT();
-            
+            return elseStmt;
         }
+        return null;
 
         /*Segunda proyección  ELSE_STATEMENT -> Ɛ */
         /*Como aparece Ɛ, nos manda error al estar vacío*/
@@ -371,20 +372,25 @@ public class ASDR implements Parser{
         if(hayErrores) throw new Exception("Error en la funcion RETURN_STMT"); //Vereficamos que no haya errores
         
         match(TipoToken.RETURN);
-        Statement re = RETURN_EXP_OPC();
+        Expression re = RETURN_EXP_OPC();
         match(TipoToken.SEMICOLON);
-        return re;
+        return new StmtReturn(re);
 
     }
 
     //RETURN_EXP_OPC -> EXPRESSION | Ɛ
-    private Statement RETURN_EXP_OPC() throws Exception{
+    private Expression RETURN_EXP_OPC() throws Exception{
         /*CHECAR*/
 
         if(hayErrores) throw new Exception("Error en la funcion RETURN_EXP_OPC"); //Vereficamos que no haya errores
 
         /*Primera proyección  RETURN_EXP_OPC -> EXPRESSION (-> * -> P(EXPRESSION)  )  */
-        return new StmtReturn(EXPRESSION());
+
+        if(preanalisis == conjunto_primero_de_expression){
+            return EXPRESSION();
+        }
+        
+        return null;
         
         /*Segunda proyección  RETURN_EXP_OPC -> Ɛ */
         /*Como aparece Ɛ, nos manda error al estar vacío*/
@@ -1006,7 +1012,7 @@ public class ASDR implements Parser{
             
             hayErrores = true;                        //Ahora existen errores
             System.out.println("Error encontrado"); //Notificamos en consola
-        
+            // Lanzar la excepcion
         }
 
     }
