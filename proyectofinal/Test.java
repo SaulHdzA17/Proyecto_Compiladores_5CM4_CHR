@@ -1,4 +1,4 @@
-package mx.ipn.escom.k.parser;
+/*package mx.ipn.escom.k.parser;
 
 //import mx.ipn.escom.k.exception.ParserException;
 import analizadorlexico.TipoToken;
@@ -21,7 +21,7 @@ public class Test{
 
     }
 
-    /****** Declaraciones ******/
+    /****** Declaraciones *****
 
     //DECLARATION -> FUN_DECL DECLARATION | VAR_DECL DECLARATION | STATEMENT DECLARATION | Ɛ
     
@@ -158,3 +158,4 @@ public class Test{
 
     
 }
+*/

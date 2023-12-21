@@ -54,7 +54,7 @@ public class ASDR implements Parser{
 
 
     //DECLARATION -> FUN_DECL DECLARATION | VAR_DECL DECLARATION | STATEMENT DECLARATION | Ɛ
-    private void DECLARATION(List<Statement> pro)throws Exception{
+    private void DECLARATION(List<Statement> pro)throws Exception{/*Puede retornar una lista*/
 
         //if(hayErrores) return; //Vereficamos que no haya errores
         
@@ -70,8 +70,7 @@ public class ASDR implements Parser{
         /*Segunda proyección DECLARATION -> VAR_DECL DECLARATION */
         }else if( this.preanalisis.tipo == TipoToken.VAR ){
 
-            Expression var = VAR_DECL();
-            pro.add(new StmtExpression(var));
+            pro.add(VAR_DECL());
             DECLARATION(pro);
 
         /*Tercera proyección DECLARATION -> STATEMENT DECLARATION */
@@ -108,20 +107,21 @@ public class ASDR implements Parser{
     }
 
     //VAR_DECL -> var id VAR_INIT ;
-    private Expression VAR_DECL() throws Exception{
+    private Statement VAR_DECL() throws Exception{
 
         //if(hayErrores) throw new Exception("Error en la funcion VAR_DECL"); //Vereficamos que no haya errores
 
         match(TipoToken.VAR);
         match(TipoToken.IDENTIFIER);
+        Token id = this.previous();
         Expression expr = VAR_INIT();
         match(TipoToken.SEMICOLON);
-        return expr;
+        return new StmtVar(id, expr);
 
     }
 
     //VAR_INIT -> = EXPRESSION | Ɛ
-    private Expression VAR_INIT() throws Exception{
+    private Expression VAR_INIT() throws Exception{/*Puede ser una exprecion unaria*/
 
         //if(hayErrores) throw new Exception("Error en la funcion VAR_INIT"); //Vereficamos que no haya errores
 
@@ -149,7 +149,6 @@ public class ASDR implements Parser{
     private Statement STATEMENT() throws Exception{
         
         //if(hayErrores) return; //Vereficamos que no haya errores
-
 
         /*Primera proyección  STATEMENT -> EXPR_STMT (-> * -> P(EXPR_STMT)  )  */
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -187,6 +186,7 @@ public class ASDR implements Parser{
 
         /*Septima proyección  STATEMENT -> BLOCK (-> * -> BLOCK)  */
         }else if( this.preanalisis.tipo == TipoToken.LEFT_BRACE ){
+            
             List<Statement> block = new ArrayList<>();
             return BLOCK(block);
 
@@ -233,13 +233,24 @@ public class ASDR implements Parser{
 
         match(TipoToken.FOR);
         match(TipoToken.LEFT_PAREN);
-        Statement for1 = FOR_STMT_1();
-        Expression for2 = FOR_STMT_2();
-        Expression for3 = FOR_STMT_3();
+        Statement for1 = FOR_STMT_1();//Declaración
+        Expression for2 = FOR_STMT_2();//Una binaria logica
+        Expression for3 = FOR_STMT_3();//Un incremento
         match(TipoToken.RIGHT_PAREN);
         Statement stmt = STATEMENT();
 
-        return new StmtLoop(for2, Statement body);
+        List<Expression> list = new ArrayList<>();
+
+        if(for1.getClass().equals(StmtVar.class) ){
+            list.add(((StmtVar)for1).initializer);
+        }else if(for1.getClass().equals(StmtExpression.class)){
+            list.add(((StmtExpression)for1).expression);
+        }
+        
+        list.add(for2);
+        list.add(for3);
+
+        return new StmtLoop((new ExprGrupFor(list)), stmt);
 
     }
 
@@ -251,7 +262,7 @@ public class ASDR implements Parser{
         /*Primera proyección  FOR_STMT_1 -> VAR_DECL (-> * -> VAR  )  */
         if( this.preanalisis.tipo == TipoToken.VAR ) {
             
-            VAR_DECL();
+            return VAR_DECL();
         
         /*Segunda proyección  FOR_STMT_1 -> EXPR_STMT (-> * -> P(EXPR_STMT)  )  */
         }else if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -275,8 +286,6 @@ public class ASDR implements Parser{
             throw new Exception("Error en la funcion FOR_STMT_1"); 
         
         }
-
-        return null;
     
     }
 
@@ -315,7 +324,7 @@ public class ASDR implements Parser{
     //FOR_STMT_3 -> EXPRESSION | Ɛ
     private Expression FOR_STMT_3() throws Exception{
 
-        if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_3"); //Vereficamos que no haya errores
+        //if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_3"); //Vereficamos que no haya errores
 
         /*Primera proyección  FOR_STMT_3 -> EXPRESSION (-> * -> P(EXPR_STMT)  )  */
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -377,7 +386,7 @@ public class ASDR implements Parser{
     private Statement PRINT_STMT() throws Exception{
         /*CHECAR*/
 
-        if(hayErrores) throw new Exception("Error en la funcion PRINT_STMT"); //Vereficamos que no haya errores
+        //if(hayErrores) throw new Exception("Error en la funcion PRINT_STMT"); //Vereficamos que no haya errores
         
         match(TipoToken.PRINT);
         Expression expr = EXPRESSION();
