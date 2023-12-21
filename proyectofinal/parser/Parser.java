@@ -1,5 +1,5 @@
 package parser;
 
 public interface Parser {
-    boolean parse();
+    boolean parse() throws Exception;
 }

@@ -24,7 +24,7 @@ public class ASDR implements Parser{
     /****** Gramática proyecto final ******/
 
     @Override
-    public boolean parse() { //Metodo sobre escrito de la clase Parser
+    public boolean parse() throws Exception{ //Metodo sobre escrito de la clase Parser
         
         PROGRAM();//Funcion Q (axioma de la gramatica), no terminal con su producciones
 
@@ -45,7 +45,7 @@ public class ASDR implements Parser{
     /****** Declaraciones ******/
 
     //PROGRAM -> DECLARATION
-    private void PROGRAM()throws Exception{
+    private void PROGRAM() throws Exception{
 
         List<Statement> pro = new ArrayList<>();
         DECLARATION(pro);
@@ -98,7 +98,7 @@ public class ASDR implements Parser{
 
 
     //FUN_DECL -> fun FUNCTION
-    private Statement FUN_DECL()throws Exception{
+    private Statement FUN_DECL() throws Exception{
 
         //if(hayErrores) throw new Exception("Error en la funcion FUN_DECL"); //Vereficamos que no haya errores
 
@@ -146,7 +146,7 @@ public class ASDR implements Parser{
     /****** Sentencias ******/
 
     //STATEMENT -> EXPR_STMT | FOR_STMT | IF_STMT | PRINT_STMT | RETURN_STMT | WHILE_STMT | BLOCK
-    private Statement STATEMENT()throws Exception{
+    private Statement STATEMENT() throws Exception{
         
         //if(hayErrores) return; //Vereficamos que no haya errores
 
@@ -227,7 +227,7 @@ public class ASDR implements Parser{
     } 
 
     //FOR_STMT -> for ( FOR_STMT_1 FOR_STMT_2 FOR_STMT_3 ) STATEMENT
-    private Statement FOR_STMT()throws Exception{
+    private Statement FOR_STMT() throws Exception{
 
         //if(hayErrores) return; //Vereficamos que no haya errores
 
@@ -239,7 +239,7 @@ public class ASDR implements Parser{
         match(TipoToken.RIGHT_PAREN);
         Statement stmt = STATEMENT();
 
-        return new StmtLoop(for2, Statement body)
+        return new StmtLoop(for2, Statement body);
 
     }
 
@@ -346,7 +346,7 @@ public class ASDR implements Parser{
         Expression cond = EXPRESSION();
         match(TipoToken.RIGHT_PAREN);
         Statement thenIf = STATEMENT();
-        Statement thenElse;
+        Statement thenElse = null;
         ELSE_STATEMENT(thenElse);
 
         return new StmtIf(cond, thenIf, thenElse);
@@ -443,7 +443,7 @@ public class ASDR implements Parser{
     }
 
     //BLOCK -> { DECLARATION }
-    private StmtBlock BLOCK(List<Statement> state){
+    private StmtBlock BLOCK( List<Statement> state ) throws Exception{
 
         //if(hayErrores) throw new Exception("Error en la funcion BLOCK"); //Vereficamos que no haya errores
 
@@ -869,13 +869,13 @@ public class ASDR implements Parser{
         
         }
 
-        throw new Exception("Error en Primary");
+        throw new Exception("Error en PRIMARY");
     }
 
     //*********** OTRAS ********************
 
     //FUNCTION -> id ( PARAMETERS_OPC ) BLOCK
-    private Statement FUNCTION(){
+    private Statement FUNCTION() throws Exception{
 
         //if(hayErrores) throw new Exception("Error en la funcion FUNCTION"); //Vereficamos que no haya errores
 
