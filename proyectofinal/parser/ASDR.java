@@ -1,5 +1,6 @@
 package parser;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import analizadorlexico.TipoToken;
@@ -45,11 +46,12 @@ public class ASDR implements Parser{
     /****** Declaraciones ******/
 
     //PROGRAM -> DECLARATION
-    private void PROGRAM() throws Exception{
+    private List<Statement> PROGRAM() throws Exception{
 
         List<Statement> pro = new ArrayList<>();
         DECLARATION(pro);
 
+        return pro;
     }
 
 
@@ -57,8 +59,6 @@ public class ASDR implements Parser{
     private void DECLARATION(List<Statement> pro)throws Exception{/*Puede retornar una lista*/
 
         //if(hayErrores) return; //Vereficamos que no haya errores
-        
-        //int x = 0; String a;
 
         /*Primera proyección DECLARATION -> FUN_DECL DECLARATION */
         if( this.preanalisis.tipo == TipoToken.FUN ){
@@ -90,8 +90,6 @@ public class ASDR implements Parser{
         }
         /*Cuarta proyección  DECLARATION -> Ɛ */
         /*Como aparece Ɛ, no manda error al esta vacío*/
-
-        //return null;
 
     }
 
@@ -170,12 +168,12 @@ public class ASDR implements Parser{
             return IF_STMT();
 
         /*Cuarta proyección  STATEMENT -> PRINT_STMT (-> * -> print)  */
-        }else if( this.preanalisis.tipo == TipoToken.RETURN  ){
+        }else if( this.preanalisis.tipo == TipoToken.PRINT  ){
 
             return PRINT_STMT();
 
         /*Quinta proyección  STATEMENT -> RETURN_STMT (-> * -> return)  */
-        }else if( this.preanalisis.tipo == TipoToken.PRINT ){
+        }else if( this.preanalisis.tipo == TipoToken.RETURN ){
             
             return RETURN_STMT();
 
@@ -233,24 +231,27 @@ public class ASDR implements Parser{
 
         match(TipoToken.FOR);
         match(TipoToken.LEFT_PAREN);
-        Statement for1 = FOR_STMT_1();//Declaración
-        Expression for2 = FOR_STMT_2();//Una binaria logica
-        Expression for3 = FOR_STMT_3();//Un incremento
+        Statement decl = FOR_STMT_1();//Declaración
+        Expression cond = FOR_STMT_2();//Una binaria logica
+        Expression inc = FOR_STMT_3();//Un incremento
         match(TipoToken.RIGHT_PAREN);
-        Statement stmt = STATEMENT();
+        Statement body = STATEMENT();
 
-        List<Expression> list = new ArrayList<>();
 
-        if(for1.getClass().equals(StmtVar.class) ){
-            list.add(((StmtVar)for1).initializer);
-        }else if(for1.getClass().equals(StmtExpression.class)){
-            list.add(((StmtExpression)for1).expression);
+        if(inc != null){
+            body = new StmtBlock(Arrays.asList(body, new StmtExpression(inc)));
         }
-        
-        list.add(for2);
-        list.add(for3);
 
-        return new StmtLoop((new ExprGrupFor(list)), stmt);
+        if(cond == null){
+            cond = new ExprLiteral(true);
+        }
+        body = new StmtLoop(cond, body);
+
+        if(decl != null){
+            body = new StmtBlock(Arrays.asList(decl, body));
+        }
+
+        return body;
 
     }
 
@@ -293,7 +294,7 @@ public class ASDR implements Parser{
     //FOR_STMT_2 -> EXPRESSION; | ;
     private Expression FOR_STMT_2() throws Exception{
 
-        if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_2"); //Vereficamos que no haya errores
+       // if(hayErrores) throw new Exception("Error en la funcion FOR_STMT_2"); //Vereficamos que no haya errores
 
         /*Primera proyección  FOR_STMT_2 -> EXPRESSION; (-> * -> P(EXPR_STMT)  )  */
         if( ( this.preanalisis.tipo == TipoToken.BANG )  || ( this.preanalisis.tipo == TipoToken.MINUS ) 
@@ -355,15 +356,15 @@ public class ASDR implements Parser{
         Expression cond = EXPRESSION();
         match(TipoToken.RIGHT_PAREN);
         Statement thenIf = STATEMENT();
-        Statement thenElse = null;
-        ELSE_STATEMENT(thenElse);
+        Statement thenElse = ELSE_STATEMENT();
+        
 
         return new StmtIf(cond, thenIf, thenElse);
 
     }
     
     //ELSE_STATEMENT -> else STATEMENT | Ɛ
-    private Statement ELSE_STATEMENT(Statement elseStmt) throws Exception{
+    private Statement ELSE_STATEMENT() throws Exception{
         /*CHECAR*/
 
         //if(hayErrores) throw new Exception("Error en la funcion ELSE_STMT"); //Vereficamos que no haya errores
@@ -372,8 +373,7 @@ public class ASDR implements Parser{
         if( this.preanalisis.tipo == TipoToken.ELSE ){
 
             match(TipoToken.ELSE);
-            elseStmt = STATEMENT();
-            return elseStmt;
+            return STATEMENT();
         }
         return null;
 
@@ -400,7 +400,7 @@ public class ASDR implements Parser{
 
         /*CHECAR*/
 
-        if(hayErrores) throw new Exception("Error en la funcion RETURN_STMT"); //Vereficamos que no haya errores
+        //if(hayErrores) throw new Exception("Error en la funcion RETURN_STMT"); //Vereficamos que no haya errores
         
         match(TipoToken.RETURN);
         Expression re = RETURN_EXP_OPC();
@@ -413,7 +413,7 @@ public class ASDR implements Parser{
     private Expression RETURN_EXP_OPC() throws Exception{
         /*CHECAR*/
 
-        if(hayErrores) throw new Exception("Error en la funcion RETURN_EXP_OPC"); //Vereficamos que no haya errores
+        ///f(hayErrores) throw new Exception("Error en la funcion RETURN_EXP_OPC"); //Vereficamos que no haya errores
 
         /*Primera proyección  RETURN_EXP_OPC -> EXPRESSION (-> * -> P(EXPRESSION)  )  */
 
