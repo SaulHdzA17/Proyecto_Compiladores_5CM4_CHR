@@ -9,14 +9,43 @@
             "name": "Interprete",
             "request": "launch",
             "mainClass": "Interprete",
-            "projectName": "Proyecto_Compiladores_5CM4_CHR_8253ac66"
+            "projectName": "proyectofinal_f11b29b8"
         },
         {
             "type": "java",
             "name": "Interprete",
             "request": "launch",
             "mainClass": "Interprete",
-            "projectName": "Proyecto_Compiladores_5CM4_CHR_3fd6fb3c"
+            "projectName": "proyectofinal_d2ad0797"
+        },
+        {
+            "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "AnalisadorLexico_1639ba2f"
+        },
+        {
+            "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "AnalisadorLexico_ce57d79b"
+        },
+        {
+            "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "AnalisadorLexico_2a67011d"
+        },
+        {
+            "type": "java",
+            "name": "Interprete",
+            "request": "launch",
+            "mainClass": "Interprete",
+            "projectName": "Proyecto_Compiladores_5CM4_CHR_3fd6fb3c",
+            //"args": "Pruebas\\Prueba1.txt"
         },
         {
             "type": "java",
